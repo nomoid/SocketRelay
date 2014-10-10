@@ -126,7 +126,12 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 			new Thread(new Inputtor(obj)).start();
 		}
 		else{
-			new Inputtor(obj).run();
+			try{
+				new Inputtor(obj).run();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -175,7 +180,12 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 
 		@Override
 		public void run(){
-			processor.input(in);
+			try{
+				processor.input(in);
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 
 	}

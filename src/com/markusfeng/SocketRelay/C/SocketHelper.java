@@ -33,8 +33,13 @@ public final class SocketHelper{
 	public static <T extends SocketProcessor<String>> SocketServer<SocketHandler<String>>
 	getStringServer(int port, SocketProcessorGenerator<T> gen)
 			throws IOException{
-		return new SocketServer<SocketHandler<String>>(port,
-				new SocketStringHandlerGenerator(gen));
+		try{
+			return new SocketServer<SocketHandler<String>>(port,
+					new SocketStringHandlerGenerator(gen));
+		}
+		catch(Exception e){
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -51,8 +56,13 @@ public final class SocketHelper{
 		SocketStringHandler handler = new SocketStringHandler(process);
 		SocketClient<SocketHandler<String>> client = new SocketClient<SocketHandler<String>>(host, port,
 				handler);
-		handler.openSocket(client.getSocket().get());
-		return client;
+		try{
+			handler.openSocket(client.getSocket().get());
+			return client;
+		}
+		catch(Exception e){
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -65,8 +75,13 @@ public final class SocketHelper{
 	public static <T extends SocketProcessor<byte[]>> SocketServer<SocketHandler<byte[]>>
 	getByteArrayServer(int port, SocketProcessorGenerator<T> gen)
 			throws IOException{
-		return new SocketServer<SocketHandler<byte[]>>(port,
-				new SocketStreamHandlerGenerator(gen));
+		try{
+			return new SocketServer<SocketHandler<byte[]>>(port,
+					new SocketStreamHandlerGenerator(gen));
+		}
+		catch(Exception e){
+			throw new IOException(e);
+		}
 	}
 
 	/**
@@ -80,10 +95,15 @@ public final class SocketHelper{
 	public static SocketClient<SocketHandler<byte[]>>
 	getByteArrayClient(String host, int port, SocketProcessor<byte[]> gen)
 			throws IOException{
-		SocketStreamHandler handler = new SocketStreamHandler(gen);
-		SocketClient<SocketHandler<byte[]>> client = new SocketClient<SocketHandler<byte[]>>(host, port,
-				handler);
-		handler.openSocket(client.getSocket().get());
-		return client;
+		try{
+			SocketStreamHandler handler = new SocketStreamHandler(gen);
+			SocketClient<SocketHandler<byte[]>> client = new SocketClient<SocketHandler<byte[]>>(host, port,
+					handler);
+			handler.openSocket(client.getSocket().get());
+			return client;
+		}
+		catch(Exception e){
+			throw new IOException(e);
+		}
 	}
 }

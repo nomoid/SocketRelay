@@ -92,7 +92,7 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 			try{
 				t.close();
 			}
-			catch(IOException e1){
+			catch(Exception e1){
 				e = new IOException(e1);
 			}
 		}
@@ -126,7 +126,7 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 					new Thread(handler).start();
 					new Thread(new LSocketDispatcher(handler)).start();
 				}
-				catch(IOException e){
+				catch(Exception e){
 					if(!closed){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -198,7 +198,12 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 		@Override
 		public void run(){
 			for(SocketListener<T> listener : listeners){
-				listener.accept(handler);
+				try{
+					listener.accept(handler);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -214,7 +219,12 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 
 			@Override
 			public void run(){
-				listener.accept(handler);
+				try{
+					listener.accept(handler);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 	}
