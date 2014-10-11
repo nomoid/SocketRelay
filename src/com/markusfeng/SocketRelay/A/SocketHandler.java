@@ -2,6 +2,9 @@ package com.markusfeng.SocketRelay.A;
 
 import java.io.Closeable;
 
+import com.markusfeng.Shared.Pair;
+import com.markusfeng.SocketRelay.L.SocketListenerHandler;
+
 /**
  * Used to handle Sockets in conjunction with SocketMachines.
  * Implementations read objects from a user defined input
@@ -12,6 +15,7 @@ import java.io.Closeable;
  * @param <T> The type of objects to read and write.
  */
 public interface SocketHandler<T> extends Runnable, Closeable,
-SocketHandleable<T>, SocketOperator<T>{
+SocketHandleable<T>, SocketOperator<T>, SocketListenerHandler<Pair
+<SocketHandler<T>, T>>{
 
 }

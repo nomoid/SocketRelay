@@ -31,6 +31,13 @@ import com.markusfeng.Shared.Version;
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
  *
+ * API 1.1.2 (2014-10-10)
+ *   Fixed optional redirect
+ *   Changed SocketListener system
+ *
+ * API 1.1.1 (2014-10-10)
+ *   Added optional redirect for SocketHandlerHub
+ *
  * API 1.1.0 (2014-10-10)
  *   Added SocketHandlerHub
  *   Moved around interfaces

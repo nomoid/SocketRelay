@@ -2,10 +2,15 @@ package com.markusfeng.SocketRelay.B;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
+import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.ClientMachineSocket;
 import com.markusfeng.SocketRelay.A.ClientSocketWrapper;
 import com.markusfeng.SocketRelay.A.SocketHandler;
+import com.markusfeng.SocketRelay.L.SocketListener;
+import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
 
 /**
  * An abstract implementation of SocketHandler.
@@ -14,7 +19,9 @@ import com.markusfeng.SocketRelay.A.SocketHandler;
  *
  * @param <T> The type of objects to read and write.
  */
-public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
+public abstract class SocketHandlerAbstract<T> extends
+SocketListenerHandlerAbstract<Pair<SocketHandler<T>, T>>
+implements SocketHandler<T>{
 
 	protected Socket socket;
 	protected SocketProcessor<T> processor;
@@ -23,8 +30,11 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 	protected boolean open = false;
 	protected boolean started = false;
 
-	protected SocketHandlerAbstract(){
+	protected Set<SocketListener<Pair<SocketHandler<? extends T>, T>>> listeners;
 
+	protected SocketHandlerAbstract(){
+		listeners = new CopyOnWriteArraySet<SocketListener<Pair<
+				SocketHandler<? extends T>, T>>>();
 	}
 
 	/**
@@ -104,6 +114,7 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 	 * @param obj the object just read
 	 */
 	protected void pushToProcessor(T obj){
+		dispatch(Pair.make(this, obj));
 		if(!processor.isInputBlockingEnabled()){
 			new Thread(new Inputtor(obj)).start();
 		}
@@ -176,5 +187,4 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 	public ClientMachineSocket getSocket(){
 		return new ClientSocketWrapper(socket);
 	}
-
 }

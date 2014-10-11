@@ -3,8 +3,6 @@ package com.markusfeng.SocketRelay.L;
 import java.util.Collection;
 import java.util.Set;
 
-import com.markusfeng.SocketRelay.A.SocketHandler;
-
 /**
  * An interface for dispatching Socket events.
  *
@@ -12,7 +10,7 @@ import com.markusfeng.SocketRelay.A.SocketHandler;
  *
  * @param <T> The type of the SocketHandler associated with the event.
  */
-public interface SocketListenerHandler<T extends SocketHandler<?>>{
+public interface SocketListenerHandler<T>{
 
 	/**
 	 * Returns a set that contains the SocketListeners of this SocketListenerHandler.

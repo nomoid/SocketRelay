@@ -10,10 +10,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.A.SocketHandleable;
 import com.markusfeng.SocketRelay.A.SocketHandler;
 import com.markusfeng.SocketRelay.A.SocketHandlerGenerator;
 import com.markusfeng.SocketRelay.B.SocketHandlerAbstract;
+import com.markusfeng.SocketRelay.L.SocketListener;
 
 /**
  * A Hub to convey all information from a SocketHandler to each other.
@@ -22,21 +24,29 @@ import com.markusfeng.SocketRelay.B.SocketHandlerAbstract;
  *
  * @param <T> The type of objects to read and write.
  */
-public class SocketHandlerHub<T> extends SocketHandlerAbstract<T> implements SocketHandlerGenerator<SocketHandlerHub<T>>{
+public class SocketHandlerHub<T> extends SocketHandlerAbstract<T>
+implements SocketHandlerGenerator<SocketHandlerHub<T>>,
+SocketListener<Pair<SocketHandler<T>, T>>{
 
 	protected List<Socket> sockets = Collections.synchronizedList(
 			new LinkedList<Socket>());
 
 	protected boolean readyToRead;
+	protected boolean redirect;
 	protected SocketHandlerGenerator<? extends SocketHandler<T>> gen;
 	protected List<SocketHandler<T>> handlers = new LinkedList<SocketHandler<T>>();
-
 	protected ExecutorService tpe;
 
-	protected SocketHandlerHub(SocketHandlerGenerator<? extends SocketHandler<T>> gen){
+	protected SocketHandlerHub(){
 		tpe = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
 				new ArrayBlockingQueue<Runnable>(1024));
+	}
+
+	public SocketHandlerHub(SocketHandlerGenerator<? extends SocketHandler<T>> gen,
+			boolean redirect){
+		this();
 		this.gen = gen;
+		this.redirect = redirect;
 	}
 
 	@Override
@@ -64,10 +74,15 @@ public class SocketHandlerHub<T> extends SocketHandlerAbstract<T> implements Soc
 
 	@Override
 	public void writeToOut(T obj) throws IOException{
-		for(SocketHandler<T> handler : handlers){
-			tpe.execute(new WriteToOutRunner(handler, obj));
-		}
+		writeToOut(obj, null);
+	}
 
+	protected void writeToOut(T obj, SocketHandler<T> exception) throws IOException{
+		for(SocketHandler<T> handler : handlers){
+			if(exception != null && handler.equals(exception)){
+				tpe.execute(new WriteToOutRunner(handler, obj));
+			}
+		}
 	}
 
 	@Override
@@ -83,27 +98,28 @@ public class SocketHandlerHub<T> extends SocketHandlerAbstract<T> implements Soc
 	 */
 	protected class ReadFromInRunner implements Runnable{
 
-		protected SocketHandleable<T> readHandler;
+		protected SocketHandler<T> readHandler;
 
-		public ReadFromInRunner(SocketHandleable<T> sh){
+		public ReadFromInRunner(SocketHandler<T> sh){
 			readHandler = sh;
 		}
 
 		@Override
 		public void run(){
 			try{
-				while(open){
-					synchronized(SocketHandlerHub.this){
-						while(!readyToRead){
-							try{
-								SocketHandlerHub.this.wait();
-							}
-							catch(InterruptedException e){
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+				synchronized(SocketHandlerHub.this){
+					while(!readyToRead){
+						try{
+							SocketHandlerHub.this.wait();
+						}
+						catch(InterruptedException e){
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
+				}
+				if(redirect){
+					readHandler.addSocketListener(SocketHandlerHub.this);
 				}
 				readHandler.readFromIn();
 			}
@@ -140,5 +156,18 @@ public class SocketHandlerHub<T> extends SocketHandlerAbstract<T> implements Soc
 			}
 		}
 
+	}
+
+	@Override
+	public void accept(Pair<SocketHandler<T>, T> handler){
+		if(redirect){
+			try{
+				writeToOut(handler.getValueTwo(), handler.getValueOne());
+			}
+			catch(IOException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

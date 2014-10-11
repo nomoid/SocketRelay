@@ -3,17 +3,15 @@ package com.markusfeng.SocketRelay.A;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.markusfeng.SocketRelay.ServerMachineSocket;
 import com.markusfeng.SocketRelay.SocketServerMachine;
 import com.markusfeng.SocketRelay.L.SocketListener;
-import com.markusfeng.SocketRelay.L.SocketListenerHandler;
+import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
 
 /**
  * An implementation of SocketServerMachine. Makes a new thread of the
@@ -28,12 +26,12 @@ import com.markusfeng.SocketRelay.L.SocketListenerHandler;
  *
  * @param <T> The type of SocketHandler used in this server.
  */
-public class SocketServer<T extends SocketHandler<?>> implements SocketServerMachine<T>, SocketListenerHandler<T>{
+public class SocketServer<T extends SocketHandler<?>> extends SocketListenerHandlerAbstract<T>
+implements SocketServerMachine<T>{
 
 	protected boolean open;
 
 	protected ServerSocket server;
-	protected Set<SocketListener<T>> listeners;
 	protected List<T> clients;
 	protected SocketHandlerGenerator<T> generator;
 	protected boolean started = false;
@@ -134,7 +132,7 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 					T handler = generator.apply(client);
 					clients.add(handler);
 					new Thread(handler).start();
-					new Thread(new LSocketDispatcher(handler)).start();
+					dispatch(handler);
 				}
 				catch(Exception e){
 					if(!closed){
@@ -160,83 +158,6 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 	@Override
 	public List<T> getClientList(){
 		return Collections.unmodifiableList(clients);
-	}
-
-	@Override
-	public Set<SocketListener<T>> getSocketListenerSet(){
-		return Collections.unmodifiableSet(listeners);
-	}
-
-	@Override
-	public void addSocketListener(SocketListener<T> listener){
-		listeners.add(listener);
-	}
-
-	@Override
-	public void addSocketListeners(Collection<SocketListener<T>> listeners){
-		listeners.addAll(listeners);
-	}
-
-	@Override
-	public void removeSocketListener(SocketListener<T> listener){
-		listeners.remove(listener);
-	}
-
-	@Override
-	public void removeSocketListeners(Collection<SocketListener<T>> listeners){
-		listeners.removeAll(listeners);
-	}
-
-	@Override
-	public void removeAllSocketListeners(){
-		listeners.clear();
-	}
-
-	/**
-	 * A class for handling dispatches to the SocketListeners.
-	 *
-	 * @author Markus Feng
-	 */
-	protected class LSocketDispatcher implements Runnable{
-
-		protected T handler;
-
-		public LSocketDispatcher(T handler){
-			this.handler = handler;
-		}
-
-		@Override
-		public void run(){
-			for(SocketListener<T> listener : listeners){
-				try{
-					listener.accept(handler);
-				}
-				catch(Exception e){
-					e.printStackTrace();
-				}
-			}
-		}
-
-		protected class LSocketAttachRunner implements Runnable{
-
-			protected SocketListener<T> listener;
-			protected T handler;
-
-			public LSocketAttachRunner(SocketListener<T> listener, T handler){
-				this.listener = listener;
-				this.handler = handler;
-			}
-
-			@Override
-			public void run(){
-				try{
-					listener.accept(handler);
-				}
-				catch(Exception e){
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	@Override
