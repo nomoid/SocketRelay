@@ -19,6 +19,20 @@ public interface SocketServerMachine<T extends SocketHandler<?>>
 extends SocketMachine{
 
 	/**
+	 * Attaches the handler generator to the SocketMachine. May be called
+	 * by a constructor.
+	 * @param generator the generator to attach.
+	 */
+	void attachHandlerGenerator(SocketHandlerGenerator<T> generator);
+
+	/**
+	 * Attaches the socket to the SocketMachine. May be called
+	 * by a constructor.
+	 * @param socket The Socket to attach.
+	 */
+	void attachSocket(ServerMachineSocket socket);
+
+	/**
 	 * Returns the ServerSocket that is owned by this server
 	 * @return the ServerSocket that is owned by this server
 	 */

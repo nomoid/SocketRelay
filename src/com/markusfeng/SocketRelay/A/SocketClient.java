@@ -40,9 +40,19 @@ public class SocketClient<T extends SocketHandler<?>> implements SocketClientMac
 	 */
 	public SocketClient(Socket socket, T handler) throws IOException{
 		this();
-		this.handler = handler;
-		client = socket;
+		attachHandler(handler);
+		attachSocket(ClientSocketWrapper.get(socket));
 		new Thread(this).start();
+	}
+
+	@Override
+	public void attachHandler(T handler){
+		this.handler = handler;
+	}
+
+	@Override
+	public void attachSocket(ClientMachineSocket socket){
+		this.client = socket.get();
 	}
 
 	/**

@@ -26,6 +26,10 @@ public class ClientSocketWrapper implements ClientMachineSocket{
 		this.socket = socket;
 	}
 
+	public static ClientSocketWrapper get(Socket socket){
+		return new ClientSocketWrapper(socket);
+	}
+
 	@Override
 	public Socket get(){
 		return socket;

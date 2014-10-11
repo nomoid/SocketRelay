@@ -1,21 +1,18 @@
 package com.markusfeng.SocketRelay.A;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
 
 import com.markusfeng.SocketRelay.ClientMachineSocket;
 
 /**
- * Used to handle Sockets in conjunction with SocketMachines.
- * Implementations read objects from a user defined input
- * and write objects to a user defined input. Reading methods
- * are defined per-user, while writing methods are defined in the handler.
+ * Operations half of the SocketHandler.
+ *
  * @author Markus Feng
  *
  * @param <T> The type of objects to read and write.
  */
-public interface SocketHandler<T> extends Runnable, Closeable{
+public interface SocketOperator<T>{
 
 	/**
 	 * Opens SocketHandler, initializing it with the socket

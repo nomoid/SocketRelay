@@ -20,7 +20,7 @@
  *
  * @author Markus Feng
  */
-@Version(value="API 1.0.1", lastUpdate = "2014-10-10")
+@Version(value="API 1.1.0", lastUpdate = "2014-10-10")
 package com.markusfeng.SocketRelay;
 
 import com.markusfeng.Shared.Version;
@@ -30,6 +30,11 @@ import com.markusfeng.Shared.Version;
  * (Macro version indicates no outgoing API changes)
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
+ *
+ * API 1.1.0 (2014-10-10)
+ *   Added SocketHandlerHub
+ *   Moved around interfaces
+ *   Class changes - added methods
  *
  * API 1.0.1 (2014-10-10)
  *   Added exception handling to various parts of the API

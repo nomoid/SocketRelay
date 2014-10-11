@@ -55,8 +55,8 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 	 */
 	public SocketServer(ServerSocket socket, SocketHandlerGenerator<T> gen) throws IOException{
 		this();
-		generator = gen;
-		server = socket;
+		attachHandlerGenerator(gen);
+		attachSocket(ServerSocketWrapper.get(socket));
 		new Thread(this).start();
 	}
 
@@ -68,6 +68,16 @@ public class SocketServer<T extends SocketHandler<?>> implements SocketServerMac
 	 */
 	public SocketServer(int port, SocketHandlerGenerator<T> gen) throws IOException{
 		this(new ServerSocket(port), gen);
+	}
+
+	@Override
+	public void attachHandlerGenerator(SocketHandlerGenerator<T> generator){
+		this.generator = generator;
+	}
+
+	@Override
+	public void attachSocket(ServerMachineSocket socket){
+		server = socket.get();
 	}
 
 	@Override

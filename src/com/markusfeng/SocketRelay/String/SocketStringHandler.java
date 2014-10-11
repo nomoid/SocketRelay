@@ -45,7 +45,7 @@ public class SocketStringHandler extends SocketHandlerAbstract<String>{
 	}
 
 	@Override
-	protected void initialize() throws IOException{
+	public void initialize() throws IOException{
 
 		out = new PrintWriter(socket.getOutputStream(), true);
 		in = new BufferedReader(

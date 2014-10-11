@@ -99,24 +99,6 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 	}
 
 	/**
-	 * Called by the SocketHandler when the input and output are to be initialized.
-	 * @throws IOException
-	 */
-	protected abstract void initialize() throws IOException;
-
-	/**
-	 * Called by the SocketHandler when reading from the input begins
-	 * @throws IOException
-	 */
-	protected abstract void readFromIn() throws IOException;
-
-	/**
-	 * Called by the SocketHandler when an object is to be written to the output
-	 * @throws IOException
-	 */
-	protected abstract void writeToOut(T obj) throws IOException;
-
-	/**
 	 * This method pushes the object just read to the processor.
 	 * This method can be called by the subclass in readFromIn().
 	 * @param obj the object just read
@@ -163,7 +145,7 @@ public abstract class SocketHandlerAbstract<T> implements SocketHandler<T>{
 		}
 		closed = true;
 		processor.removeHandler(this);
-		socket.close();
+		getSocket().get().close();
 	}
 
 	/**

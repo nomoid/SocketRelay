@@ -9,6 +9,7 @@ import java.io.Closeable;
  * @author Markus Feng
  */
 public interface SocketMachine extends Closeable, Runnable{
+
 	/**
 	 * Opens the SocketMachine to start all operations.
 	 * By convention, one should start the Runnable of the

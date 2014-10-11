@@ -26,6 +26,10 @@ public class ServerSocketWrapper implements ServerMachineSocket{
 		this.socket = socket;
 	}
 
+	public static ServerSocketWrapper get(ServerSocket socket){
+		return new ServerSocketWrapper(socket);
+	}
+
 	@Override
 	public ServerSocket get(){
 		return socket;

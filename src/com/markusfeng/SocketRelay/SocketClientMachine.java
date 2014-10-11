@@ -14,6 +14,20 @@ import com.markusfeng.SocketRelay.A.SocketHandler;
 public interface SocketClientMachine<T extends SocketHandler<?>> extends SocketMachine{
 
 	/**
+	 * Attaches the handler to the SocketMachine. May be called
+	 * by a constructor.
+	 * @param handler the handler to attach.
+	 */
+	void attachHandler(T handler);
+
+	/**
+	 * Attaches the socket to the SocketMachine. May be called
+	 * by a constructor.
+	 * @param socket The Socket to attach.
+	 */
+	void attachSocket(ClientMachineSocket socket);
+
+	/**
 	 * Returns the handler that this client uses for its connections
 	 * @return the handler that this client uses for its connections
 	 */
