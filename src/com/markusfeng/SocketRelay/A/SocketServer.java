@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.markusfeng.SocketRelay.ServerMachineSocket;
 import com.markusfeng.SocketRelay.SocketServerMachine;
@@ -41,8 +41,8 @@ implements SocketServerMachine<T>{
 	 * Creates a SocketServer without any arguments.
 	 */
 	protected SocketServer(){
-		clients = new LinkedList<T>();
-		listeners = new CopyOnWriteArraySet<SocketListener<T>>();
+		clients = Collections.synchronizedList(new LinkedList<T>());
+		listeners = new HashSet<SocketListener<T>>();
 	}
 
 	/**
@@ -96,12 +96,14 @@ implements SocketServerMachine<T>{
 		IOException e = null;
 		open = false;
 		server.close();
-		for(T t : clients){
-			try{
-				t.close();
-			}
-			catch(Exception e1){
-				e = new IOException(e1);
+		synchronized(clients){
+			for(T t : clients){
+				try{
+					t.close();
+				}
+				catch(Exception e1){
+					e = new IOException(e1);
+				}
 			}
 		}
 		if(e != null){

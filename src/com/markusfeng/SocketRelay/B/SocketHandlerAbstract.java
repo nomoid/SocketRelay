@@ -2,8 +2,8 @@ package com.markusfeng.SocketRelay.B;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.ClientMachineSocket;
@@ -33,7 +33,7 @@ implements SocketHandler<T>{
 	protected Set<SocketListener<Pair<SocketHandler<? extends T>, T>>> listeners;
 
 	protected SocketHandlerAbstract(){
-		listeners = new CopyOnWriteArraySet<SocketListener<Pair<
+		listeners = new HashSet<SocketListener<Pair<
 				SocketHandler<? extends T>, T>>>();
 	}
 
