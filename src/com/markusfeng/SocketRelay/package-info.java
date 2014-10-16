@@ -20,7 +20,7 @@
  *
  * @author Markus Feng
  */
-@Version(value="API 1.1.3", lastUpdate = "2014-10-10")
+@Version(value="API 1.1.4", lastUpdate = "2014-10-15")
 package com.markusfeng.SocketRelay;
 
 import com.markusfeng.Shared.Version;
@@ -30,6 +30,9 @@ import com.markusfeng.Shared.Version;
  * (Macro version indicates no outgoing API changes)
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
+ *
+ * API 1.1.4 (2014-10-15)
+ *   Added Thread Pools to improve performance
  *
  * API 1.1.3 (2014-10-12)
  *   Fixed concurrency handlers on API

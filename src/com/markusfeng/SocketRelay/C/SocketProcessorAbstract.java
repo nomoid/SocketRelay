@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.markusfeng.SocketRelay.A.SocketHandler;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
@@ -19,6 +23,13 @@ import com.markusfeng.SocketRelay.B.SocketProcessor;
 public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 
 	protected Set<SocketHandler<T>> handlers = new HashSet<SocketHandler<T>>();
+
+	protected ExecutorService tpe;
+
+	protected SocketProcessorAbstract(){
+		tpe = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
+				new ArrayBlockingQueue<Runnable>(1024));
+	}
 
 	@Override
 	public void attachHandler(SocketHandler<T> handler){
@@ -56,7 +67,7 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 			new Outputter(null, out).output();
 		}
 		else{
-			new Thread(new Outputter(null, out)).start();
+			tpe.execute(new Outputter(null, out));
 		}
 	}
 
@@ -66,7 +77,7 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 			new Outputter(handler, out).output();
 		}
 		else{
-			new Thread(new Outputter(handler, out)).start();
+			tpe.execute(new Outputter(handler, out));
 		}
 	}
 

@@ -116,7 +116,7 @@ implements SocketHandler<T>{
 	protected void pushToProcessor(T obj){
 		dispatch(Pair.make(this, obj));
 		if(!processor.isInputBlockingEnabled()){
-			new Thread(new Inputtor(obj)).start();
+			tpe.execute(new Inputtor(obj));
 		}
 		else{
 			try{

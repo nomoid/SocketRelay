@@ -1,11 +1,22 @@
 package com.markusfeng.SocketRelay.L;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T>{
 
-	protected Set<SocketListener<T>> listeners;
+	protected Set<SocketListener<T>> listeners = new HashSet<SocketListener<T>>();
+	protected ExecutorService tpe;
+
+	protected SocketListenerHandlerAbstract(){
+		tpe = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
+				new ArrayBlockingQueue<Runnable>(1024));
+	}
 
 	@Override
 	public Set<SocketListener<T>> getSocketListenerSet(){
@@ -38,7 +49,7 @@ public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T
 	}
 
 	protected void dispatch(T handler){
-		new Thread(new LSocketDispatcher(handler)).start();
+		tpe.execute(new LSocketDispatcher(handler));
 	}
 
 	/**
