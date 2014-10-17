@@ -114,7 +114,7 @@ implements SocketHandler<T>{
 	 * @param obj the object just read
 	 */
 	protected void pushToProcessor(T obj){
-		dispatch(Pair.make(this, obj));
+		dispatch(new Pair<SocketHandler<T>, T>(this, obj));
 		if(!processor.isInputBlockingEnabled()){
 			tpe.execute(new Inputtor(obj));
 		}

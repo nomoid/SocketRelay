@@ -1,7 +1,9 @@
 package com.markusfeng.SocketRelay.A;
 
 import java.net.Socket;
-import java.util.function.Function;
+
+import com.markusfeng.SocketRelay.Compatibility.Function;
+import com.markusfeng.SocketRelay.Compatibility.FunctionalInterface;
 
 /**
  * An interface used to create SocketHandlers used in conjunction with SocketMachines.
