@@ -20,7 +20,7 @@
  *
  * @author Markus Feng
  */
-@Version(value="API 1.1.4b", lastUpdate = "2014-10-16")
+@Version(value="API 1.1.5", lastUpdate = "2014-10-30")
 package com.markusfeng.SocketRelay;
 
 import com.markusfeng.Shared.Version;
@@ -30,6 +30,9 @@ import com.markusfeng.Shared.Version;
  * (Macro version indicates no outgoing API changes)
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
+ *
+ * API 1.1.5 (2014-10-30)
+ *   Fixed variable hiding bugs
  *
  * API 1.1.4b (2014-10-16)
  *   Changed compile compatibility from 1.8 to 1.6

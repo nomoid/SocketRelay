@@ -5,10 +5,6 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.A.SocketHandleable;
@@ -35,11 +31,9 @@ SocketListener<Pair<SocketHandler<T>, T>>{
 	protected boolean redirect;
 	protected SocketHandlerGenerator<? extends SocketHandler<T>> gen;
 	protected List<SocketHandler<T>> handlers = new LinkedList<SocketHandler<T>>();
-	protected ExecutorService tpe;
 
 	protected SocketHandlerHub(){
-		tpe = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
-				new ArrayBlockingQueue<Runnable>(1024));
+
 	}
 
 	public SocketHandlerHub(SocketHandlerGenerator<? extends SocketHandler<T>> gen,

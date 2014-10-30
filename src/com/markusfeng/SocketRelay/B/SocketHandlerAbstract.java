@@ -2,14 +2,11 @@ package com.markusfeng.SocketRelay.B;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.ClientMachineSocket;
 import com.markusfeng.SocketRelay.A.ClientSocketWrapper;
 import com.markusfeng.SocketRelay.A.SocketHandler;
-import com.markusfeng.SocketRelay.L.SocketListener;
 import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
 
 /**
@@ -30,11 +27,8 @@ implements SocketHandler<T>{
 	protected boolean open = false;
 	protected boolean started = false;
 
-	protected Set<SocketListener<Pair<SocketHandler<? extends T>, T>>> listeners;
-
 	protected SocketHandlerAbstract(){
-		listeners = new HashSet<SocketListener<Pair<
-				SocketHandler<? extends T>, T>>>();
+
 	}
 
 	/**
