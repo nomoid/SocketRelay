@@ -86,6 +86,7 @@ implements SocketServerMachine<T>{
 
 	@Override
 	public void close() throws IOException{
+		super.close();
 		if(closed){
 			return;
 		}

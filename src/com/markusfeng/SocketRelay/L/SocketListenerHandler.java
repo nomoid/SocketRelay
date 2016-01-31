@@ -1,5 +1,6 @@
 package com.markusfeng.SocketRelay.L;
 
+import java.io.Closeable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  *
  * @param <T> The type of the SocketHandler associated with the event.
  */
-public interface SocketListenerHandler<T>{
+public interface SocketListenerHandler<T> extends Closeable{
 
 	/**
 	 * Returns a set that contains the SocketListeners of this SocketListenerHandler.

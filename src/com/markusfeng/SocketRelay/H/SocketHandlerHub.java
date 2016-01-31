@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.A.SocketHandleable;
@@ -48,7 +49,12 @@ SocketListener<Pair<SocketHandler<T>, T>>{
 		synchronized(sockets){
 			sockets.add(socket);
 			SocketHandler<T> handler = gen.apply(socket);
-			tpe.execute(new ReadFromInRunner(handler));
+			try{
+				tpe.execute(new ReadFromInRunner(handler));
+			}
+			catch(RejectedExecutionException e){
+				throw new IllegalStateException(e);
+			}
 			handlers.add(handler);
 		}
 	}

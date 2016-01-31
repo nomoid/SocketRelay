@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -67,7 +68,12 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 			new Outputter(null, out).output();
 		}
 		else{
-			tpe.execute(new Outputter(null, out));
+			try{
+				tpe.execute(new Outputter(null, out));
+			}
+			catch(RejectedExecutionException e){
+				throw new IllegalStateException(e);
+			}
 		}
 	}
 
@@ -77,7 +83,12 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 			new Outputter(handler, out).output();
 		}
 		else{
-			tpe.execute(new Outputter(handler, out));
+			try{
+				tpe.execute(new Outputter(handler, out));
+			}
+			catch(RejectedExecutionException e){
+				throw new IllegalStateException(e);
+			}
 		}
 	}
 
@@ -137,5 +148,10 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 	public boolean isInputBlockingEnabled(){
 		//Does not block on input
 		return false;
+	}
+	
+	@Override
+	public void close(){
+		tpe.shutdown();
 	}
 }

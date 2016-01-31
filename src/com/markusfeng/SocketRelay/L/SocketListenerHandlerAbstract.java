@@ -1,10 +1,12 @@
 package com.markusfeng.SocketRelay.L;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -49,7 +51,12 @@ public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T
 	}
 
 	protected void dispatch(T handler){
-		tpe.execute(new LSocketDispatcher(handler));
+		try{
+			tpe.execute(new LSocketDispatcher(handler));
+		}
+		catch(RejectedExecutionException e){
+			throw new IllegalStateException(e);
+		}
 	}
 
 	/**
@@ -97,5 +104,10 @@ public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void close() throws IOException{
+		tpe.shutdown();
 	}
 }

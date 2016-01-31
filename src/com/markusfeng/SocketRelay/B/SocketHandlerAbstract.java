@@ -2,6 +2,7 @@ package com.markusfeng.SocketRelay.B;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.ClientMachineSocket;
@@ -110,7 +111,12 @@ implements SocketHandler<T>{
 	protected void pushToProcessor(T obj){
 		dispatch(new Pair<SocketHandler<T>, T>(this, obj));
 		if(!processor.isInputBlockingEnabled()){
-			tpe.execute(new Inputtor(obj));
+			try{
+				tpe.execute(new Inputtor(obj));
+			}
+			catch(RejectedExecutionException e){
+				throw new IllegalStateException(e);
+			}	
 		}
 		else{
 			try{
@@ -145,6 +151,7 @@ implements SocketHandler<T>{
 
 	@Override
 	public void close() throws IOException{
+		super.close();
 		if(closed){
 			return;
 		}
