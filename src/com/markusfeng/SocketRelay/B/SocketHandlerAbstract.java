@@ -157,6 +157,7 @@ implements SocketHandler<T>{
 		}
 		closed = true;
 		processor.removeHandler(this);
+		processor.close();
 		getSocket().get().close();
 	}
 

@@ -20,7 +20,7 @@
  *
  * @author Markus Feng
  */
-@Version(value="API 1.1.6", lastUpdate = "2016-01-30")
+@Version(value="API 1.1.6b", lastUpdate = "2016-01-31")
 package com.markusfeng.SocketRelay;
 
 import com.markusfeng.Shared.Version;
@@ -30,6 +30,9 @@ import com.markusfeng.Shared.Version;
  * (Micro version indicates no outgoing API changes)
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
+ * 
+ * API 1.1.6b (2016-01-31)
+ *   Closing a server or client now closes all attached processors
  * 
  * API 1.1.6 (2016-01-30)
  *   Fixed executors not shutting down
