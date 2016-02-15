@@ -1,5 +1,5 @@
 /**
- * The com.github.assisstion.Communicator.relay API contains classes to
+ * The com.markusfeng.SocketRelay API contains classes to
  * enable programmers to easily connect from one Socket to another and to
  * provide custom functionality associated with the sockets. Each package
  * that is labeled with a letter of the alphabet is a stand-alone package
@@ -20,16 +20,32 @@
  *
  * @author Markus Feng
  */
-@Version(value="API 1.1.4", lastUpdate = "2014-10-15")
+@Version(value="API 1.1.7", lastUpdate = "2016-02-15")
 package com.markusfeng.SocketRelay;
 
 import com.markusfeng.Shared.Version;
 /*
  * Version History:
  *
- * (Macro version indicates no outgoing API changes)
+ * (Micro version indicates no outgoing API changes)
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
+ * 
+ * API 1.1.7 (2016-01-31)
+ *   Changed the visibility of some methods and fields
+ * 
+ * API 1.1.6b (2016-01-31)
+ *   Closing a server or client now closes all attached processors
+ * 
+ * API 1.1.6 (2016-01-30)
+ *   Fixed executors not shutting down
+ *   Added RejectedExecutionException wrapping
+ *
+ * API 1.1.5 (2014-10-30)
+ *   Fixed variable hiding bugs
+ *
+ * API 1.1.4b (2014-10-16)
+ *   Changed compile compatibility from 1.8 to 1.6
  *
  * API 1.1.4 (2014-10-15)
  *   Added Thread Pools to improve performance

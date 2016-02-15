@@ -1,5 +1,5 @@
 /**
- * The com.github.assisstion.Communicator.relay API A package contains
+ * The com.markusfeng.SocketRelay API A package contains
  * classes to create a basic SocketClient and SocketServer that utilize
  * SocketHandlers. This package is sufficient, though it is recommended
  * to be used with the B package, as it provides concrete implementations to

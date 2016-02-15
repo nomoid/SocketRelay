@@ -29,13 +29,13 @@ import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
 public class SocketServer<T extends SocketHandler<?>> extends SocketListenerHandlerAbstract<T>
 implements SocketServerMachine<T>{
 
-	protected boolean open;
+	private boolean open;
 
 	protected ServerSocket server;
 	protected List<T> clients;
 	protected SocketHandlerGenerator<T> generator;
-	protected boolean started = false;
-	protected boolean closed = false;
+	private boolean started = false;
+	private boolean closed = false;
 
 	/**
 	 * Creates a SocketServer without any arguments.
@@ -86,6 +86,7 @@ implements SocketServerMachine<T>{
 
 	@Override
 	public void close() throws IOException{
+		super.close();
 		if(closed){
 			return;
 		}
@@ -165,5 +166,9 @@ implements SocketServerMachine<T>{
 	@Override
 	public ServerMachineSocket getSocket(){
 		return new ServerSocketWrapper(server);
+	}
+	
+	protected boolean isClosed(){
+		return closed;
 	}
 }

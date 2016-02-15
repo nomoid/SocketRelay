@@ -2,14 +2,12 @@ package com.markusfeng.SocketRelay.B;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.markusfeng.Shared.Pair;
 import com.markusfeng.SocketRelay.ClientMachineSocket;
 import com.markusfeng.SocketRelay.A.ClientSocketWrapper;
 import com.markusfeng.SocketRelay.A.SocketHandler;
-import com.markusfeng.SocketRelay.L.SocketListener;
 import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
 
 /**
@@ -25,16 +23,13 @@ implements SocketHandler<T>{
 
 	protected Socket socket;
 	protected SocketProcessor<T> processor;
-	protected boolean init = false;
-	protected boolean closed = false;
-	protected boolean open = false;
-	protected boolean started = false;
-
-	protected Set<SocketListener<Pair<SocketHandler<? extends T>, T>>> listeners;
+	private boolean init = false;
+	private boolean closed = false;
+	private boolean open = false;
+	private boolean started = false;
 
 	protected SocketHandlerAbstract(){
-		listeners = new HashSet<SocketListener<Pair<
-				SocketHandler<? extends T>, T>>>();
+
 	}
 
 	/**
@@ -114,9 +109,14 @@ implements SocketHandler<T>{
 	 * @param obj the object just read
 	 */
 	protected void pushToProcessor(T obj){
-		dispatch(Pair.make(this, obj));
+		dispatch(new Pair<SocketHandler<T>, T>(this, obj));
 		if(!processor.isInputBlockingEnabled()){
-			tpe.execute(new Inputtor(obj));
+			try{
+				tpe.execute(new Inputtor(obj));
+			}
+			catch(RejectedExecutionException e){
+				throw new IllegalStateException(e);
+			}	
 		}
 		else{
 			try{
@@ -151,11 +151,13 @@ implements SocketHandler<T>{
 
 	@Override
 	public void close() throws IOException{
+		super.close();
 		if(closed){
 			return;
 		}
 		closed = true;
 		processor.removeHandler(this);
+		processor.close();
 		getSocket().get().close();
 	}
 
@@ -186,5 +188,9 @@ implements SocketHandler<T>{
 	@Override
 	public ClientMachineSocket getSocket(){
 		return new ClientSocketWrapper(socket);
+	}
+	
+	protected boolean isClosed(){
+		return closed;
 	}
 }

@@ -74,14 +74,14 @@ public class SocketStreamHandler extends SocketHandlerAbstract<byte[]> {
 		byte[] buffer = new byte[bufferSize];
 		int count = in.read(buffer);
 		while (count >= 0) {
-			if(!closed){
+			if(!isClosed()){
 				try{
 					byte[] byteHolder = new byte[count];
 					System.arraycopy(buffer, 0, byteHolder, 0, count);
 					pushToProcessor(byteHolder);
 				}
 				catch(Exception e){
-					if(!closed){
+					if(!isClosed()){
 						e.printStackTrace();
 					}
 				}
