@@ -23,10 +23,10 @@ implements SocketHandler<T>{
 
 	protected Socket socket;
 	protected SocketProcessor<T> processor;
-	protected boolean init = false;
-	protected boolean closed = false;
-	protected boolean open = false;
-	protected boolean started = false;
+	private boolean init = false;
+	private boolean closed = false;
+	private boolean open = false;
+	private boolean started = false;
 
 	protected SocketHandlerAbstract(){
 
@@ -188,5 +188,9 @@ implements SocketHandler<T>{
 	@Override
 	public ClientMachineSocket getSocket(){
 		return new ClientSocketWrapper(socket);
+	}
+	
+	protected boolean isClosed(){
+		return closed;
 	}
 }

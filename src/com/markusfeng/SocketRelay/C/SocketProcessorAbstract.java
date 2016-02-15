@@ -25,11 +25,16 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 
 	protected Set<SocketHandler<T>> handlers = new HashSet<SocketHandler<T>>();
 
-	protected ExecutorService tpe;
+	private ExecutorService tpe;
+	private boolean closed;
 
 	protected SocketProcessorAbstract(){
-		tpe = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
-				new ArrayBlockingQueue<Runnable>(1024));
+		this(new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
+				new ArrayBlockingQueue<Runnable>(1024)));
+	}
+	
+	protected SocketProcessorAbstract(ExecutorService service){
+		tpe = service;
 	}
 
 	@Override
@@ -152,6 +157,15 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 	
 	@Override
 	public void close(){
-		tpe.shutdown();
+		closed = true;
+		executor().shutdown();
+	}
+	
+	protected ExecutorService executor(){
+		return tpe;
+	}
+	
+	protected boolean isClosed(){
+		return closed;
 	}
 }

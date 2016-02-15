@@ -56,13 +56,13 @@ public class SocketStringHandler extends SocketHandlerAbstract<String>{
 	public void readFromIn() throws IOException{
 		String inputLine;
 
-		while (!closed && (inputLine = in.readLine()) != null) {
-			if(!closed){
+		while (!isClosed() && (inputLine = in.readLine()) != null) {
+			if(!isClosed()){
 				try{
 					pushToProcessor(inputLine);
 				}
 				catch(Exception e){
-					if(!closed){
+					if(!isClosed()){
 						e.printStackTrace();
 					}
 				}

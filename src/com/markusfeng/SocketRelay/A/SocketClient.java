@@ -22,8 +22,8 @@ public class SocketClient<T extends SocketHandler<?>> implements SocketClientMac
 
 	protected Socket client;
 	protected T handler;
-	protected boolean started = false;
-	protected boolean closed = false;
+	private boolean started = false;
+	private boolean closed = false;
 
 	/**
 	 * Creates a SocketClient without any arguments.
@@ -115,5 +115,9 @@ public class SocketClient<T extends SocketHandler<?>> implements SocketClientMac
 			new Thread(handler).start();
 		}
 
+	}
+	
+	protected boolean isClosed(){
+		return closed;
 	}
 }
