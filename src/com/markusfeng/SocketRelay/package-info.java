@@ -20,7 +20,7 @@
  *
  * @author Markus Feng
  */
-@Version(value="API 1.1.7", lastUpdate = "2016-02-15")
+@Version(value = "API 1.2.0alpha", lastUpdate = "2016-03-07")
 package com.markusfeng.SocketRelay;
 
 import com.markusfeng.Shared.Version;
@@ -30,13 +30,16 @@ import com.markusfeng.Shared.Version;
  * (Micro version indicates no outgoing API changes)
  * (Minor version indicates no incompatibilities introduced)
  * (Major version indicates major changes)
- * 
- * API 1.1.7 (2016-01-31)
- *   Changed the visibility of some methods and fields
- * 
+ *
+ * API 1.2.0alpha (2016-03-07)
+ *   Added RemoteMethodProcessor
+ *   Added GroupProcessor
+ *   Added SocketLineHandler
+ *   Added Commands and RemoteMethods
+ *
  * API 1.1.6b (2016-01-31)
  *   Closing a server or client now closes all attached processors
- * 
+ *
  * API 1.1.6 (2016-01-30)
  *   Fixed executors not shutting down
  *   Added RejectedExecutionException wrapping
@@ -79,4 +82,3 @@ import com.markusfeng.Shared.Version;
  *     com.markusfeng.SocketRelay.Stream
  *     com.markusfeng.SocketRelay.String
  */
-
