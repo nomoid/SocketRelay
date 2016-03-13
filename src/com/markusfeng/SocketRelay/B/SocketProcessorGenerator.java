@@ -12,7 +12,7 @@ import com.markusfeng.SocketRelay.Compatibility.Supplier;
  * @param <T> The type of SocketProcessor generated.
  */
 @FunctionalInterface
-public interface SocketProcessorGenerator<T extends SocketProcessor<?>> extends Supplier<T>{
+public interface SocketProcessorGenerator<T extends SocketProcessor<?>>extends Supplier<T>{
 	//uses T get() from superclass
 	/**
 	 * Returns an instance of a SocketProcessor.

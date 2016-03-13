@@ -20,11 +20,11 @@ import com.markusfeng.Shared.Commands;
 import com.markusfeng.SocketRelay.Compatibility.Function;
 
 public abstract class RemoteMethodProcessor extends GroupProcessor{
-	
+
 	private Map<String, RemoteMethod> methods;
 	private Map<Long, CompletableFuture<Map<Long, CompletableFuture<String>>>> invocations;
 
-	public RemoteMethodProcessor(boolean isServer) {
+	public RemoteMethodProcessor(boolean isServer){
 		super(isServer);
 		methods = new HashMap<String, RemoteMethod>();
 		invocations = new HashMap<Long, CompletableFuture<Map<Long, CompletableFuture<String>>>>();
@@ -134,9 +134,9 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 					executor().execute(new Runnable(){
 
 						@Override
-						public void run() {
+						public void run(){
 							long invokeID = Long.parseLong(commandC.getArguments().get("invokeid"));
-							try {
+							try{
 								//Wait until invokedata comes back
 								Map<Long, CompletableFuture<String>> returns = invocations.get(invokeID).get();
 								CompletableFuture<String> future = returns.remove(senderC);
@@ -147,31 +147,35 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 									future.completeExceptionally(new SecurityException("Illegal remove invocation"));
 								}
 								else if(commandC.getArguments().get("exceptionthrown") != null){
-									future.completeExceptionally(new CompletionException(commandC.getArguments()
-											.get("exceptionthrown"), null));
+									future.completeExceptionally(new CompletionException(
+											commandC.getArguments().get("exceptionthrown"), null));
 								}
 								else{
 									future.complete(commandC.getArguments().get("return"));
 								}
-							} catch (InterruptedException e) {
+							}
+							catch(InterruptedException e){
 								// TODO Auto-generated catch block
 								e.printStackTrace();
-							} catch (ExecutionException e) {
+							}
+							catch(ExecutionException e){
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
-						
+
 					});
 				}
 				else if(isServer()){
 					//Redirect
 					outputToHandler(getIDs().get(callerID), command, false);
 				}
-			} catch(NullPointerException e){
+			}
+			catch(NullPointerException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch(NumberFormatException e){
+			}
+			catch(NumberFormatException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -208,22 +212,21 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 			return sb.toString();
 		}
 		else{
-			return recipients.length() == 0 ? command.getArguments().get("id") : 
-				recipients + "/" + command.getArguments().get("id");
+			return recipients.length() == 0 ? command.getArguments().get("id")
+					: recipients + "/" + command.getArguments().get("id");
 		}
 	}
-	
+
 	protected void invokeData(Command command){
 		Map<Long, CompletableFuture<String>> returnMap = new HashMap<Long, CompletableFuture<String>>();
 		String targets = command.getArguments().get("targets");
-		String[] targetArray = targets.split("/"); 
+		String[] targetArray = targets.split("/");
 		for(String target : targetArray){
 			returnMap.put(Long.parseLong(target), new CompletableFuture<String>());
 		}
 		try{
 			long invokeID = Long.parseLong(command.getArguments().get("invokeid"));
-			CompletableFuture<Map<Long, CompletableFuture<String>>> future = 
-					invocations.get(invokeID);
+			CompletableFuture<Map<Long, CompletableFuture<String>>> future = invocations.get(invokeID);
 			future.complete(returnMap);
 		}
 		catch(NumberFormatException e){
@@ -264,7 +267,7 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Makes a CompletableFuture of Long -> CompletableFuture
 	 * As the server returns the "got invocation call", the list of longs that will be invoked comes back
@@ -274,11 +277,10 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 	public Future<Map<Long, CompletableFuture<String>>> invokeMethod(String name, Map<String, String> args){
 		waitForID();
 		final Map<String, String> data = new HashMap<String, String>(args);
-		final CompletableFuture<Map<Long, CompletableFuture<String>>> future = 
-				new CompletableFuture<Map<Long, CompletableFuture<String>>>();
+		final CompletableFuture<Map<Long, CompletableFuture<String>>> future = new CompletableFuture<Map<Long, CompletableFuture<String>>>();
 		executor().execute(new Runnable(){
 			public void run(){
-				try {
+				try{
 					//Wait until invoke data comes back
 					future.get();
 					//Local copy of invocation
@@ -287,10 +289,12 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 					if(c != null){
 						systemProcess(c);
 					}
-				} catch (InterruptedException e) {
+				}
+				catch(InterruptedException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (ExecutionException e) {
+				}
+				catch(ExecutionException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -320,43 +324,44 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 		}
 		else{
 			//Send data to server
-			try {
+			try{
 				outputToHandler(getIDs().get(getServerID()), Commands.make("invoke", data), false);
-			} catch (IOException e) {
+			}
+			catch(IOException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return future;
 	}
-	
-	
+
 	@Override
-	protected boolean permission(long requester, String permission) {
+	protected boolean permission(long requester, String permission){
 		//By default, all permissions are granted
 		return true;
 	}
-	
-	public static <T, S, R> CompletableFuture<Map<S, R>> runAsynchronously(final ExecutorService exec, Map<S, CompletableFuture<T>> map, final Function<Map.Entry<S, T>, R> function){
+
+	public static <T, S, R> CompletableFuture<Map<S, R>> runAsynchronously(final ExecutorService exec,
+			Map<S, CompletableFuture<T>> map, final Function<Map.Entry<S, T>, R> function){
 		final CompletableFuture<Map<S, R>> future = new CompletableFuture<Map<S, R>>();
 		final Set<Callable<Map.Entry<S, R>>> callableSet = new HashSet<Callable<Map.Entry<S, R>>>();
 		for(final Map.Entry<S, CompletableFuture<T>> entry : map.entrySet()){
 			callableSet.add(new Callable<Map.Entry<S, R>>(){
 
 				@Override
-				public Map.Entry<S, R> call() throws Exception {
+				public Map.Entry<S, R> call() throws Exception{
 					T value = entry.getValue().get();
-					return new AbstractMap.SimpleImmutableEntry<S, R>(entry.getKey(), 
+					return new AbstractMap.SimpleImmutableEntry<S, R>(entry.getKey(),
 							function.apply(new AbstractMap.SimpleImmutableEntry<S, T>(entry.getKey(), value)));
 				}
-				
+
 			});
 		}
 		exec.execute(new Runnable(){
 
 			@Override
-			public void run() {
-				try {
+			public void run(){
+				try{
 					Map<S, R> map = new HashMap<S, R>();
 					List<Future<Map.Entry<S, R>>> list = exec.invokeAll(callableSet);
 					for(Future<Map.Entry<S, R>> f : list){
@@ -364,30 +369,31 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 							Map.Entry<S, R> entry = f.get();
 							map.put(entry.getKey(), entry.getValue());
 						}
-						catch (ExecutionException e) {
+						catch(ExecutionException e){
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 					future.complete(map);
-				} catch (InterruptedException e) {
+				}
+				catch(InterruptedException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			
+
 		});
 		return future;
 	}
-	
+
 	protected void addMethod(String name, RemoteMethod remoteMethod){
 		methods.put(name, remoteMethod);
 	}
-	
+
 	protected Map<Long, CompletableFuture<Map<Long, CompletableFuture<String>>>> getInvocations(){
 		return Collections.unmodifiableMap(invocations);
 	}
-	
+
 	protected Map<String, RemoteMethod> getRemoteMethods(){
 		return Collections.unmodifiableMap(methods);
 	}

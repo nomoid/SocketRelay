@@ -15,8 +15,7 @@ import com.markusfeng.SocketRelay.A.SocketHandlerGenerator;
  *
  * @param <T> The type of SocketHandler used in this machine.
  */
-public interface SocketServerMachine<T extends SocketHandler<?>>
-extends SocketMachine{
+public interface SocketServerMachine<T extends SocketHandler<?>>extends SocketMachine{
 
 	/**
 	 * Attaches the handler generator to the SocketMachine. May be called

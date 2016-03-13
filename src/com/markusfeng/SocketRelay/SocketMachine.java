@@ -21,7 +21,6 @@ public interface SocketMachine extends Closeable, Runnable{
 	 */
 	void open();
 
-
 	/**
 	 * Returns the Socket that is owned by this machine
 	 * @return the Socket that is owned by this machine

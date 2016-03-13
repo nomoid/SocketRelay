@@ -16,7 +16,7 @@ public class SocketStringHandler extends SocketLineHandler<String>{
 	public SocketStringHandler(SocketProcessor<String> processor){
 		super(processor);
 	}
-	
+
 	public SocketStringHandler(Socket socket, SocketProcessor<String> processor){
 		super(socket, processor);
 	}
@@ -30,6 +30,5 @@ public class SocketStringHandler extends SocketLineHandler<String>{
 	protected Maybe<String> convertFromObject(String obj){
 		return Maybe.with(obj);
 	}
-
 
 }

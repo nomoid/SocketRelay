@@ -21,22 +21,21 @@ import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
 import com.markusfeng.SocketRelay.C.SocketHelper;
 import com.markusfeng.SocketRelay.Compatibility.Function;
 
-public class RemoteMethodMessageProcessor extends RemoteMethodProcessor 
+public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 		implements SocketProcessorGenerator<RemoteMethodProcessor>{
-	
+
 	static final boolean VERBOSE = false;
-	
+
 	static Random random = new Random();
 	static final int MIN_PORT = 10000;
 	static final int MAX_PORT = 60000;
-	
+
 	static Set<Closeable> closeables = new HashSet<Closeable>();
 	static boolean done = false;
-	
+
 	static int randomPort(){
 		return random.nextInt(MAX_PORT - MIN_PORT) + MIN_PORT;
 	}
-	
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args){
@@ -46,36 +45,38 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 			final RemoteMethodMessageProcessor client = startClient(new String[]{""}, port);
 			final RemoteMethodMessageProcessor client2 = startClient(new String[]{""}, port);
 			new Thread(new Runnable(){
-				
+
 				@Override
-				public void run() {
-					try {
+				public void run(){
+					try{
 						//client.waitForID();
 						Thread.sleep(1000);
-						Future<Map<Long, CompletableFuture<String>>> future = 
-								server.invokeMethod("ping", Collections.singletonMap("pingmessage", "helloworld"));
+						Future<Map<Long, CompletableFuture<String>>> future = server.invokeMethod("ping",
+								Collections.singletonMap("pingmessage", "helloworld"));
 						Map<Long, CompletableFuture<String>> map = future.get();
 						System.out.println("invocations gotten: " + map);
 						/*for(Map.Entry<Long, CompletableFuture<String>> entry : map.entrySet()){
 							System.out.println("invocation returned: " + entry.getKey() + "," + entry.getValue().get());
 						}*/
-						CompletableFuture<Map<Long, Void>> completed = runAsynchronously(Executors.newCachedThreadPool(), map, new Function<Map.Entry<Long, String>, Void>(){
+						CompletableFuture<Map<Long, Void>> completed = runAsynchronously(
+								Executors.newCachedThreadPool(), map, new Function<Map.Entry<Long, String>, Void>(){
 
 							@Override
-							public Void apply(Map.Entry<Long, String> entry) {
+							public Void apply(Map.Entry<Long, String> entry){
 								System.out.println("invocation returned: " + entry.getKey() + "," + entry.getValue());
 								return null;
 							}
-							
+
 						});
 						completed.get();
 						System.out.println("invocation complete");
-					} catch (Exception e){
+					}
+					catch(Exception e){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 			}).start();
 			/*new Thread(new Runnable(){
 				
@@ -100,7 +101,8 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 				
 			}).start();*/
 			Thread.sleep(5000);
-		} catch (InterruptedException e) {
+		}
+		catch(InterruptedException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -115,19 +117,19 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 			}
 			done = true;
 		}
-		try {
+		try{
 			Thread.sleep(1000);
-		} catch (InterruptedException e) {
+		}
+		catch(InterruptedException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	static RemoteMethodMessageProcessor startServer(int port){
 		RemoteMethodMessageProcessor mp = new RemoteMethodMessageProcessor(true);
 		try{
-			SocketServer<SocketHandler<String>> server =
-					SocketHelper.getStringServer(port, mp);
+			SocketServer<SocketHandler<String>> server = SocketHelper.getStringServer(port, mp);
 			closeables.add(server);
 			server.open();
 		}
@@ -141,15 +143,14 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 		}
 		return mp;
 	}
-	
+
 	static RemoteMethodMessageProcessor startClient(String[] field, int portZ){
 		RemoteMethodMessageProcessor mp = new RemoteMethodMessageProcessor(false);
 		try{
 			//String[] field = mpm.getField().split(":");
 			String host = field.length < 1 ? "localhost" : field[0];
 			int port = field.length < 2 ? portZ : Integer.parseInt(field[1]);
-			SocketClient<SocketHandler<String>> client =
-					SocketHelper.getStringClient(host, port, mp);
+			SocketClient<SocketHandler<String>> client = SocketHelper.getStringClient(host, port, mp);
 			closeables.add(client);
 			client.open();
 		}
@@ -164,67 +165,71 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 		return mp;
 	}
 
-	public RemoteMethodMessageProcessor(boolean isServer) {
+	public RemoteMethodMessageProcessor(boolean isServer){
 		super(isServer);
 		addMethod("ping", new RemoteMethod(){
 
 			@Override
-			public String apply(Map<String, String> parameters) {
+			public String apply(Map<String, String> parameters){
 				long randTime = random.nextInt(2000) + 2000;
 				System.out.println(getID() + ": ping recieved (" + randTime + "): " + parameters.get("pingmessage"));
-				try {
+				try{
 					Thread.sleep(randTime);
-				} catch (InterruptedException e) {
+				}
+				catch(InterruptedException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				System.out.println(getID() + ": ping back (" + randTime + "): " + parameters.get("pingmessage"));
 				return parameters.get("pingmessage");
 			}
-			
+
 		});
 	}
 
 	@Override
-	protected Map<String, String> handlerAdded(final Future<Long> addedID, SocketHandler<String> handler) {
+	protected Map<String, String> handlerAdded(final Future<Long> addedID, SocketHandler<String> handler){
 		if(VERBOSE){
 			executor().execute(new Runnable(){
-				
+
 				@Override
 				public void run(){
-					try {
+					try{
 						long added = addedID.get();
 						System.out.println(getID() + ": Handler added with id: " + added);
-					} catch (InterruptedException e) {
+					}
+					catch(InterruptedException e){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (ExecutionException e) {
+					}
+					catch(ExecutionException e){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 			});
 		}
 		return new HashMap<String, String>();
 	}
 
 	@Override
-	protected void handlerRemoved(long addedID, SocketHandler<String> handler) {
+	protected void handlerRemoved(long addedID, SocketHandler<String> handler){
 		if(VERBOSE){
 			System.out.println(getID() + ": Handler removed with id: " + addedID);
 		}
 	}
-	
+
 	@Override
-	protected void process(Command command) {
+	protected void process(Command command){
 		if(VERBOSE){
-			System.out.println(getID() + ": Command recieved: " + command.getName() + " with arguments:" + command.getArguments());
+			System.out.println(
+					getID() + ": Command recieved: " + command.getName() + " with arguments:" + command.getArguments());
 		}
 	}
-	
+
 	@Override
-	public RemoteMethodProcessor get() {
+	public RemoteMethodProcessor get(){
 		return this;
 	}
 

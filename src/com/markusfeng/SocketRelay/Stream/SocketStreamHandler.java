@@ -13,7 +13,7 @@ import com.markusfeng.SocketRelay.B.SocketProcessor;
  *
  * @author Markus Feng
  */
-public class SocketStreamHandler extends SocketHandlerAbstract<byte[]> {
+public class SocketStreamHandler extends SocketHandlerAbstract<byte[]>{
 
 	/**
 	 * The default buffer size for streaming byte[]
@@ -73,7 +73,7 @@ public class SocketStreamHandler extends SocketHandlerAbstract<byte[]> {
 
 		byte[] buffer = new byte[bufferSize];
 		int count = in.read(buffer);
-		while (count >= 0) {
+		while(count >= 0){
 			if(!isClosed()){
 				try{
 					byte[] byteHolder = new byte[count];

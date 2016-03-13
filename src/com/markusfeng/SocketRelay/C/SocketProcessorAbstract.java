@@ -32,7 +32,7 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 		this(new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
 				new ArrayBlockingQueue<Runnable>(1024)));
 	}
-	
+
 	protected SocketProcessorAbstract(ExecutorService service){
 		tpe = service;
 	}
@@ -154,17 +154,17 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 		//Does not block on input
 		return false;
 	}
-	
+
 	@Override
 	public void close(){
 		closed = true;
 		executor().shutdown();
 	}
-	
+
 	protected ExecutorService executor(){
 		return tpe;
 	}
-	
+
 	protected boolean isClosed(){
 		return closed;
 	}

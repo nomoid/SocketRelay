@@ -20,19 +20,34 @@ public interface MachineSocket extends Closeable{
 	 * @return the wrapped Socket.
 	 */
 	Object get();
+
 	void bind(SocketAddress bindpoint) throws IOException;
+
 	InetAddress getInetAddress();
+
 	int getLocalPort();
+
 	InetAddress getLocalAddress();
+
 	SocketAddress getLocalSocketAddress();
+
 	int getSoTimeout() throws IOException;
+
 	int getReceiveBufferSize() throws SocketException;
+
 	boolean getReuseAddress() throws SocketException;
+
 	int getPort();
+
 	boolean isBound();
+
 	boolean isClosed();
+
 	void setPerformancePreferences(int connectionTime, int latency, int bandwidth);
+
 	void setReceiveBufferSize(int size) throws SocketException;
+
 	void setReuseAddress(boolean on) throws SocketException;
+
 	void setSoTimeout(int timeout) throws SocketException;
 }

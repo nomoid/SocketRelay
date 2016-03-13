@@ -19,19 +19,20 @@ import com.markusfeng.SocketRelay.A.SocketServer;
 import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
 import com.markusfeng.SocketRelay.C.SocketHelper;
 
-public class MessagePassingProcessor extends GroupProcessor implements SocketProcessorGenerator<MessagePassingProcessor>{
-	
+public class MessagePassingProcessor extends GroupProcessor
+		implements SocketProcessorGenerator<MessagePassingProcessor>{
+
 	static Random random = new Random();
 	static final int MIN_PORT = 10000;
 	static final int MAX_PORT = 60000;
-	
+
 	static Set<Closeable> closeables = new HashSet<Closeable>();
 	static boolean done = false;
-	
+
 	static int randomPort(){
 		return random.nextInt(MAX_PORT - MIN_PORT) + MIN_PORT;
 	}
-	
+
 	public static void main(String[] args){
 		try{
 			int port = randomPort();
@@ -40,27 +41,31 @@ public class MessagePassingProcessor extends GroupProcessor implements SocketPro
 			final MessagePassingProcessor client = startClient(new String[]{""}, port);
 			final MessagePassingProcessor client2 = startClient(new String[]{""}, port);
 			new Thread(new Runnable(){
-				
+
 				@Override
-				public void run() {
-					try {
+				public void run(){
+					try{
 						while(!done){
 							client.waitForID();
-							client.output(Commands.make("ping", Collections.singletonMap("value", String.valueOf(random.nextLong()))), false);
+							client.output(
+									Commands.make("ping",
+											Collections.singletonMap("value", String.valueOf(random.nextLong()))),
+									false);
 							Thread.sleep(1000);
 						}
-					} catch (Exception e){
+					}
+					catch(Exception e){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 			}).start();
 			new Thread(new Runnable(){
-				
+
 				@Override
-				public void run() {
-					try {
+				public void run(){
+					try{
 						while(!done){
 							Object lock = client2.getAssignmentLock();
 							synchronized(lock){
@@ -68,18 +73,23 @@ public class MessagePassingProcessor extends GroupProcessor implements SocketPro
 									lock.wait();
 								}
 							}
-							client2.output(Commands.make("pong", Collections.singletonMap("value", String.valueOf(random.nextLong()))), false);
+							client2.output(
+									Commands.make("pong",
+											Collections.singletonMap("value", String.valueOf(random.nextLong()))),
+									false);
 							Thread.sleep(2500);
 						}
-					} catch (Exception e){
+					}
+					catch(Exception e){
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
+
 			}).start();
 			Thread.sleep(10000);
-		} catch (InterruptedException e) {
+		}
+		catch(InterruptedException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -94,19 +104,19 @@ public class MessagePassingProcessor extends GroupProcessor implements SocketPro
 			}
 			done = true;
 		}
-		try {
+		try{
 			Thread.sleep(1000);
-		} catch (InterruptedException e) {
+		}
+		catch(InterruptedException e){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	static MessagePassingProcessor startServer(int port){
 		MessagePassingProcessor mp = new MessagePassingProcessor(true);
 		try{
-			SocketServer<SocketHandler<String>> server =
-					SocketHelper.getStringServer(port, mp);
+			SocketServer<SocketHandler<String>> server = SocketHelper.getStringServer(port, mp);
 			closeables.add(server);
 			server.open();
 		}
@@ -120,15 +130,14 @@ public class MessagePassingProcessor extends GroupProcessor implements SocketPro
 		}
 		return mp;
 	}
-	
+
 	static MessagePassingProcessor startClient(String[] field, int portZ){
 		MessagePassingProcessor mp = new MessagePassingProcessor(false);
 		try{
 			//String[] field = mpm.getField().split(":");
 			String host = field.length < 1 ? "localhost" : field[0];
 			int port = field.length < 2 ? portZ : Integer.parseInt(field[1]);
-			SocketClient<SocketHandler<String>> client =
-					SocketHelper.getStringClient(host, port, mp);
+			SocketClient<SocketHandler<String>> client = SocketHelper.getStringClient(host, port, mp);
 			closeables.add(client);
 			client.open();
 		}
@@ -143,49 +152,52 @@ public class MessagePassingProcessor extends GroupProcessor implements SocketPro
 		return mp;
 	}
 
-	public MessagePassingProcessor(boolean isServer) {
+	public MessagePassingProcessor(boolean isServer){
 		super(isServer);
 	}
 
 	@Override
-	protected Map<String, String> handlerAdded(final Future<Long> addedID, SocketHandler<String> handler) {
+	protected Map<String, String> handlerAdded(final Future<Long> addedID, SocketHandler<String> handler){
 		executor().execute(new Runnable(){
-			
+
 			@Override
 			public void run(){
-				try {
+				try{
 					long added = addedID.get();
 					System.out.println(getID() + ": Handler added with id: " + added);
-				} catch (InterruptedException e) {
+				}
+				catch(InterruptedException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (ExecutionException e) {
+				}
+				catch(ExecutionException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-			
+
 		});
 		return new HashMap<String, String>();
 	}
 
 	@Override
-	protected void handlerRemoved(long addedID, SocketHandler<String> handler) {
+	protected void handlerRemoved(long addedID, SocketHandler<String> handler){
 		System.out.println(getID() + ": Handler removed with id: " + addedID);
-	}
-	
-	@Override
-	protected void process(Command command) {
-		System.out.println(getID() + ": Command recieved: " + command.getName() + " with arguments:" + command.getArguments());
 	}
 
 	@Override
-	public MessagePassingProcessor get() {
+	protected void process(Command command){
+		System.out.println(
+				getID() + ": Command recieved: " + command.getName() + " with arguments:" + command.getArguments());
+	}
+
+	@Override
+	public MessagePassingProcessor get(){
 		return this;
 	}
 
 	@Override
-	protected boolean permission(long requester, String permission) {
+	protected boolean permission(long requester, String permission){
 		return true;
 	}
 }

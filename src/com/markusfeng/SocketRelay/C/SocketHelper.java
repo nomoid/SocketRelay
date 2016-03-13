@@ -30,12 +30,10 @@ public final class SocketHelper{
 	 * @return the SocketServer generated
 	 * @throws IOException
 	 */
-	public static <T extends SocketProcessor<String>> SocketServer<SocketHandler<String>>
-	getStringServer(int port, SocketProcessorGenerator<T> gen)
-			throws IOException{
+	public static <T extends SocketProcessor<String>> SocketServer<SocketHandler<String>> getStringServer(int port,
+			SocketProcessorGenerator<T> gen) throws IOException{
 		try{
-			return new SocketServer<SocketHandler<String>>(port,
-					new SocketStringHandlerGenerator(gen));
+			return new SocketServer<SocketHandler<String>>(port, new SocketStringHandlerGenerator(gen));
 		}
 		catch(Exception e){
 			throw new IOException(e);
@@ -50,12 +48,10 @@ public final class SocketHelper{
 	 * @return the SocketClient generated
 	 * @throws IOException
 	 */
-	public static SocketClient<SocketHandler<String>>
-	getStringClient(String host, int port, SocketProcessor<String> process)
-			throws IOException{
+	public static SocketClient<SocketHandler<String>> getStringClient(String host, int port,
+			SocketProcessor<String> process) throws IOException{
 		SocketStringHandler handler = new SocketStringHandler(process);
-		SocketClient<SocketHandler<String>> client = new SocketClient<SocketHandler<String>>(host, port,
-				handler);
+		SocketClient<SocketHandler<String>> client = new SocketClient<SocketHandler<String>>(host, port, handler);
 		try{
 			handler.openSocket(client.getSocket().get());
 			return client;
@@ -72,12 +68,10 @@ public final class SocketHelper{
 	 * @return the SocketServer generated
 	 * @throws IOException
 	 */
-	public static <T extends SocketProcessor<byte[]>> SocketServer<SocketHandler<byte[]>>
-	getByteArrayServer(int port, SocketProcessorGenerator<T> gen)
-			throws IOException{
+	public static <T extends SocketProcessor<byte[]>> SocketServer<SocketHandler<byte[]>> getByteArrayServer(int port,
+			SocketProcessorGenerator<T> gen) throws IOException{
 		try{
-			return new SocketServer<SocketHandler<byte[]>>(port,
-					new SocketStreamHandlerGenerator(gen));
+			return new SocketServer<SocketHandler<byte[]>>(port, new SocketStreamHandlerGenerator(gen));
 		}
 		catch(Exception e){
 			throw new IOException(e);
@@ -92,13 +86,11 @@ public final class SocketHelper{
 	 * @return the SocketClient generated
 	 * @throws IOException
 	 */
-	public static SocketClient<SocketHandler<byte[]>>
-	getByteArrayClient(String host, int port, SocketProcessor<byte[]> gen)
-			throws IOException{
+	public static SocketClient<SocketHandler<byte[]>> getByteArrayClient(String host, int port,
+			SocketProcessor<byte[]> gen) throws IOException{
 		try{
 			SocketStreamHandler handler = new SocketStreamHandler(gen);
-			SocketClient<SocketHandler<byte[]>> client = new SocketClient<SocketHandler<byte[]>>(host, port,
-					handler);
+			SocketClient<SocketHandler<byte[]>> client = new SocketClient<SocketHandler<byte[]>>(host, port, handler);
 			handler.openSocket(client.getSocket().get());
 			return client;
 		}

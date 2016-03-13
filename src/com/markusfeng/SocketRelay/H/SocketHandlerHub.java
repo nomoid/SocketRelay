@@ -21,12 +21,10 @@ import com.markusfeng.SocketRelay.L.SocketListener;
  *
  * @param <T> The type of objects to read and write.
  */
-public class SocketHandlerHub<T> extends SocketHandlerAbstract<T>
-implements SocketHandlerGenerator<SocketHandlerHub<T>>,
-SocketListener<Pair<SocketHandler<T>, T>>{
+public class SocketHandlerHub<T>extends SocketHandlerAbstract<T>
+		implements SocketHandlerGenerator<SocketHandlerHub<T>>, SocketListener<Pair<SocketHandler<T>, T>>{
 
-	protected List<Socket> sockets = Collections.synchronizedList(
-			new LinkedList<Socket>());
+	protected List<Socket> sockets = Collections.synchronizedList(new LinkedList<Socket>());
 
 	protected boolean readyToRead;
 	protected boolean redirect;
@@ -37,8 +35,7 @@ SocketListener<Pair<SocketHandler<T>, T>>{
 
 	}
 
-	public SocketHandlerHub(SocketHandlerGenerator<? extends SocketHandler<T>> gen,
-			boolean redirect){
+	public SocketHandlerHub(SocketHandlerGenerator<? extends SocketHandler<T>> gen, boolean redirect){
 		this();
 		this.gen = gen;
 		this.redirect = redirect;

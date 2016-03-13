@@ -14,7 +14,7 @@ import com.markusfeng.SocketRelay.Compatibility.FunctionalInterface;
  * @param <T> The type of SocketHandler generated.
  */
 @FunctionalInterface
-public interface SocketHandlerGenerator<T extends SocketHandler<?>> extends Function<Socket, T>{
+public interface SocketHandlerGenerator<T extends SocketHandler<?>>extends Function<Socket, T>{
 	//uses T apply(Socket socket) from superclass
 	/**
 	 * Returns an instance of a SocketHandler.

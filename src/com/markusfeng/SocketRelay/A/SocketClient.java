@@ -116,7 +116,7 @@ public class SocketClient<T extends SocketHandler<?>> implements SocketClientMac
 		}
 
 	}
-	
+
 	protected boolean isClosed(){
 		return closed;
 	}

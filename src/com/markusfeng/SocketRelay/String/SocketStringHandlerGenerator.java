@@ -12,8 +12,7 @@ import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
  *
  * @author Markus Feng
  */
-public class SocketStringHandlerGenerator implements
-SocketHandlerGenerator<SocketHandler<String>>{
+public class SocketStringHandlerGenerator implements SocketHandlerGenerator<SocketHandler<String>>{
 
 	protected SocketProcessorGenerator<? extends SocketProcessor<String>> generator;
 

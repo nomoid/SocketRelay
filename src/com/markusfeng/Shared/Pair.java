@@ -86,9 +86,8 @@ public class Pair<T, S> implements Serializable{
 
 	@Override
 	public int hashCode(){
-		return getValueOne().hashCode() ^
-				getValueTwo().hashCode() << 16 ^ HIGH_MASK ^
-				getValueTwo().hashCode() >> 16 ^ LOW_MASK;
+		return getValueOne().hashCode() ^ getValueTwo().hashCode() << 16 ^ HIGH_MASK ^ getValueTwo().hashCode() >> 16
+				^ LOW_MASK;
 	}
 
 	/**

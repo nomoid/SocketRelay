@@ -14,8 +14,7 @@ import com.markusfeng.SocketRelay.L.SocketListenerHandler;
  *
  * @param <T> The type of objects to read and write.
  */
-public interface SocketHandler<T> extends Runnable, Closeable,
-SocketHandleable<T>, SocketOperator<T>, SocketListenerHandler<Pair
-<SocketHandler<T>, T>>{
+public interface SocketHandler<T>extends Runnable, Closeable, SocketHandleable<T>, SocketOperator<T>,
+		SocketListenerHandler<Pair<SocketHandler<T>, T>>{
 
 }

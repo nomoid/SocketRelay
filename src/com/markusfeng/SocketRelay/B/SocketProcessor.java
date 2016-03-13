@@ -16,7 +16,7 @@ import com.markusfeng.SocketRelay.A.SocketHandler;
  *
  * @param <T> The type of the objects to read and write.
  */
-public interface SocketProcessor<T> extends Closeable{
+public interface SocketProcessor<T>extends Closeable{
 
 	/**
 	 * Called by a SocketHandler when input is recieved

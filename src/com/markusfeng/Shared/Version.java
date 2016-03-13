@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Version{
+public @interface Version {
 	String value();
 
 	String lastUpdate() default "N/A";

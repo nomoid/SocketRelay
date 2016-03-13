@@ -26,8 +26,8 @@ import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
  *
  * @param <T> The type of SocketHandler used in this server.
  */
-public class SocketServer<T extends SocketHandler<?>> extends SocketListenerHandlerAbstract<T>
-implements SocketServerMachine<T>{
+public class SocketServer<T extends SocketHandler<?>>extends SocketListenerHandlerAbstract<T>
+		implements SocketServerMachine<T>{
 
 	private boolean open;
 
@@ -167,7 +167,7 @@ implements SocketServerMachine<T>{
 	public ServerMachineSocket getSocket(){
 		return new ServerSocketWrapper(server);
 	}
-	
+
 	protected boolean isClosed(){
 		return closed;
 	}

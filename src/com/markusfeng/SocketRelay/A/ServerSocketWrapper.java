@@ -91,8 +91,7 @@ public class ServerSocketWrapper implements ServerMachineSocket{
 	}
 
 	@Override
-	public void setPerformancePreferences(int connectionTime, int latency,
-			int bandwidth){
+	public void setPerformancePreferences(int connectionTime, int latency, int bandwidth){
 		socket.setPerformancePreferences(connectionTime, latency, bandwidth);
 	}
 

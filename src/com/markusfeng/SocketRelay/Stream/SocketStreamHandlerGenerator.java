@@ -12,8 +12,7 @@ import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
  *
  * @author Markus Feng
  */
-public class SocketStreamHandlerGenerator implements
-SocketHandlerGenerator<SocketHandler<byte[]>>{
+public class SocketStreamHandlerGenerator implements SocketHandlerGenerator<SocketHandler<byte[]>>{
 
 	protected SocketProcessorGenerator<? extends SocketProcessor<byte[]>> generator;
 

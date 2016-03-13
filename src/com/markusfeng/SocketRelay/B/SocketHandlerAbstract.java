@@ -17,9 +17,8 @@ import com.markusfeng.SocketRelay.L.SocketListenerHandlerAbstract;
  *
  * @param <T> The type of objects to read and write.
  */
-public abstract class SocketHandlerAbstract<T> extends
-SocketListenerHandlerAbstract<Pair<SocketHandler<T>, T>>
-implements SocketHandler<T>{
+public abstract class SocketHandlerAbstract<T>extends SocketListenerHandlerAbstract<Pair<SocketHandler<T>, T>>
+		implements SocketHandler<T>{
 
 	protected Socket socket;
 	protected SocketProcessor<T> processor;
@@ -116,7 +115,7 @@ implements SocketHandler<T>{
 			}
 			catch(RejectedExecutionException e){
 				throw new IllegalStateException(e);
-			}	
+			}
 		}
 		else{
 			try{
@@ -189,7 +188,7 @@ implements SocketHandler<T>{
 	public ClientMachineSocket getSocket(){
 		return new ClientSocketWrapper(socket);
 	}
-	
+
 	protected boolean isClosed(){
 		return closed;
 	}

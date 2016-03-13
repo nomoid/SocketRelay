@@ -105,7 +105,7 @@ public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T
 			}
 		}
 	}
-	
+
 	@Override
 	public void close() throws IOException{
 		tpe.shutdown();
