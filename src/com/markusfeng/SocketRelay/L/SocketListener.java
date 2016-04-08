@@ -1,7 +1,6 @@
 package com.markusfeng.SocketRelay.L;
 
-import com.markusfeng.SocketRelay.Compatibility.Consumer;
-import com.markusfeng.SocketRelay.Compatibility.FunctionalInterface;
+import java.util.function.Consumer;
 
 /**
  * A listener for listening to Socket events

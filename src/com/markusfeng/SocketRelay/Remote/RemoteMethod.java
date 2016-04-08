@@ -1,8 +1,7 @@
 package com.markusfeng.SocketRelay.Remote;
 
 import java.util.Map;
-
-import com.markusfeng.SocketRelay.Compatibility.Function;
+import java.util.function.Function;
 
 /**
  * A method that can be remotely invoked.

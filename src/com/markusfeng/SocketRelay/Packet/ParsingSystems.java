@@ -1,8 +1,9 @@
 package com.markusfeng.SocketRelay.Packet;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import com.markusfeng.Shared.Maybe;
-import com.markusfeng.SocketRelay.Compatibility.Function;
-import com.markusfeng.SocketRelay.Compatibility.Supplier;
 import com.markusfeng.SocketRelay.Switching.SendingObject;
 import com.markusfeng.SocketRelay.Switching.SendingObjects;
 

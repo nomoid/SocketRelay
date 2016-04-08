@@ -2,10 +2,10 @@ package com.markusfeng.SocketRelay.Remote;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.markusfeng.Shared.Command;
 import com.markusfeng.Shared.Commands;
-import com.markusfeng.SocketRelay.Compatibility.Consumer;
 
 /**
  * Helper class containing methods related to RemoteMethods

@@ -14,10 +14,10 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 import com.markusfeng.Shared.Command;
 import com.markusfeng.Shared.Commands;
-import com.markusfeng.SocketRelay.Compatibility.Function;
 
 public abstract class RemoteMethodProcessor extends GroupProcessor{
 
@@ -32,29 +32,29 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 
 	/*
 	 * Commands (in addition to the ones in GroupProcessor):
-	 * 
+	 *
 	 * invoke: sent when a method invocation is warranted (use recipients to control invocation targets)
 	 *   methodname (string): the name of the method to be invoked
 	 *   multithread (marker): a separate thread should be created for the invocation
 	 *   invokeid (id): the id of the invocation (to match with the invoke return)
-	 *   
+	 *
 	 * invokedata: sent by a server to a client when the client invokes the messages
 	 *   targets (id...): the invocation targets of the invocation //maybe encrypt with proxy later? [array split with /]
-	 *   
+	 *
 	 * invokereturn: sent by the system when an invocation is completed (returns all original arguments)
 	 *   callerid (id): the id of the original method caller
 	 *   return (string): the return value of the method invocation
 	 *   accessdenied (marker): if the access is denied
 	 *   exceptionthrown (marker): if an exception was thrown in the invocation
-	 * 
+	 *
 	 * Arguments:
-	 * 
+	 *
 	 * Permissions:
 	 * invoke (any): allows the client to invoke any method
 	 * invoke.* (any): allows the client to invoke a specific method
 	 * invokereturn (any): allows the client to return the invocation
 	 * invokedata (any): allows the client to send back invocation data
-	 * 
+	 *
 	 */
 	@Override
 	public boolean systemProcess(Command command) throws IOException{
@@ -93,6 +93,7 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 				final long senderC = sender;
 				if(multiThread){
 					executor().execute(new Runnable(){
+						@Override
 						public void run(){
 							Command c = applyInvoke(commandC);
 							if(c != null){
@@ -271,7 +272,7 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 	/*
 	 * Makes a CompletableFuture of Long -> CompletableFuture
 	 * As the server returns the "got invocation call", the list of longs that will be invoked comes back
-	 * This makes a mapping that is completed; 
+	 * This makes a mapping that is completed;
 	 * As each invocation comes back, each CompletableFuture is completed individually
 	 */
 	public Future<Map<Long, CompletableFuture<String>>> invokeMethod(String name, Map<String, String> args){
@@ -279,6 +280,7 @@ public abstract class RemoteMethodProcessor extends GroupProcessor{
 		final Map<String, String> data = new HashMap<String, String>(args);
 		final CompletableFuture<Map<Long, CompletableFuture<String>>> future = new CompletableFuture<Map<Long, CompletableFuture<String>>>();
 		executor().execute(new Runnable(){
+			@Override
 			public void run(){
 				try{
 					//Wait until invoke data comes back

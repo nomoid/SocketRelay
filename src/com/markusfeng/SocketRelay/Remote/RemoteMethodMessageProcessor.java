@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 import com.markusfeng.Shared.Command;
 import com.markusfeng.SocketRelay.A.SocketClient;
@@ -19,7 +20,6 @@ import com.markusfeng.SocketRelay.A.SocketHandler;
 import com.markusfeng.SocketRelay.A.SocketServer;
 import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
 import com.markusfeng.SocketRelay.C.SocketHelper;
-import com.markusfeng.SocketRelay.Compatibility.Function;
 
 public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 		implements SocketProcessorGenerator<RemoteMethodProcessor>{
@@ -79,7 +79,7 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 
 			}).start();
 			/*new Thread(new Runnable(){
-				
+
 				@Override
 				public void run() {
 					try {
@@ -98,7 +98,7 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 						e.printStackTrace();
 					}
 				}
-				
+
 			}).start();*/
 			Thread.sleep(5000);
 		}

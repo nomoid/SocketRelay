@@ -1,11 +1,11 @@
 package com.markusfeng.SocketRelay.Switching;
 
 import java.net.Socket;
+import java.util.function.Supplier;
 
 import com.markusfeng.Shared.Command;
 import com.markusfeng.Shared.Maybe;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
-import com.markusfeng.SocketRelay.Compatibility.Supplier;
 import com.markusfeng.SocketRelay.Packet.ParsingSystem;
 import com.markusfeng.SocketRelay.Packet.ParsingSystems;
 

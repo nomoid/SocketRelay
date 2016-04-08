@@ -1,8 +1,7 @@
 package com.markusfeng.Shared;
 
 import java.util.NoSuchElementException;
-
-import com.markusfeng.SocketRelay.Compatibility.Function;
+import java.util.function.Function;
 
 /**
  * A container class that can contain a null value

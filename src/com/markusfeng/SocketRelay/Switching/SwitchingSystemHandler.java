@@ -2,10 +2,10 @@ package com.markusfeng.SocketRelay.Switching;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.function.Function;
 
 import com.markusfeng.Shared.Command;
 import com.markusfeng.Shared.Maybe;
-import com.markusfeng.SocketRelay.Compatibility.Function;
 import com.markusfeng.SocketRelay.Packet.ParsingSystem;
 import com.markusfeng.SocketRelay.Packet.SocketPacketHandler;
 
