@@ -111,7 +111,7 @@ public abstract class SocketHandlerAbstract<T>extends SocketListenerHandlerAbstr
 		dispatch(new Pair<SocketHandler<T>, T>(this, obj));
 		if(!processor.isInputBlockingEnabled()){
 			try{
-				tpe.execute(new Inputtor(obj));
+				executor().execute(new Inputtor(obj));
 			}
 			catch(RejectedExecutionException e){
 				throw new IllegalStateException(e);

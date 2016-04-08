@@ -3,17 +3,19 @@ package com.markusfeng.SocketRelay.Stream;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
-import com.markusfeng.SocketRelay.B.SocketHandlerAbstract;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
+import com.markusfeng.SocketRelay.H.SocketIOHandler;
 
 /**
  * A SocketHandler used for byte[] data.
  *
  * @author Markus Feng
  */
-public class SocketStreamHandler extends SocketHandlerAbstract<byte[]>{
+public class SocketStreamHandler extends SocketIOHandler<byte[]>{
 
 	/**
 	 * The default buffer size for streaming byte[]
@@ -62,10 +64,29 @@ public class SocketStreamHandler extends SocketHandlerAbstract<byte[]>{
 		this.bufferSize = bufferSize;
 	}
 
+	public SocketStreamHandler(SocketProcessor<byte[]> processor, InputStream in, OutputStream out){
+		super(processor, in, out);
+	}
+
+	public SocketStreamHandler(Socket socket, SocketProcessor<byte[]> processor, InputStream in, OutputStream out){
+		super(socket, processor, in, out);
+	}
+
+	public SocketStreamHandler(SocketProcessor<byte[]> processor, int bufferSize, InputStream in, OutputStream out){
+		super(processor, in, out);
+		this.bufferSize = bufferSize;
+	}
+
+	public SocketStreamHandler(Socket socket, SocketProcessor<byte[]> processor, int bufferSize, InputStream in,
+			OutputStream out){
+		super(socket, processor, in, out);
+		this.bufferSize = bufferSize;
+	}
+
 	@Override
 	public void initialize() throws IOException{
-		out = new BufferedOutputStream(socket.getOutputStream());
-		in = new BufferedInputStream(socket.getInputStream());
+		out = new BufferedOutputStream(getOutputStream());
+		in = new BufferedInputStream(getInputStream());
 	}
 
 	@Override

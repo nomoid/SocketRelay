@@ -55,6 +55,7 @@ public class SocketServer<T extends SocketHandler<?>>extends SocketListenerHandl
 		this();
 		attachHandlerGenerator(gen);
 		attachSocket(ServerSocketWrapper.get(socket));
+		//TODO raw thread creation
 		new Thread(this).start();
 	}
 
@@ -134,6 +135,7 @@ public class SocketServer<T extends SocketHandler<?>>extends SocketListenerHandl
 					Socket client = server.accept();
 					T handler = generator.apply(client);
 					clients.add(handler);
+					//TODO raw thread creation
 					new Thread(handler).start();
 					dispatch(handler);
 				}

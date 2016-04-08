@@ -119,7 +119,7 @@ public final class Commands{
 
 		@Override
 		public String toString(){
-			return Parser.DEFAULT_PARSER.commandToString(this);
+			return Commands.stringValue(this);
 		}
 
 		@Override
@@ -152,7 +152,23 @@ public final class Commands{
 	 * @return the Command parsed by the string
 	 */
 	public static Command parseCommand(String in){
-		return Parser.DEFAULT_PARSER.parseCommand(in);
+		return Parser.defaultParser().parseCommand(in);
+	}
+
+	/**
+	 * Converts a command to its string representation.
+	 *
+	 * Command format:
+	 * "[" name (";" argument "=" value)* (";")? "]"
+	 *
+	 * e.g.
+	 * [add;x=3;y=4]
+	 *
+	 * @param command the command to convert to String
+	 * @return
+	 */
+	public static String stringValue(Command command){
+		return Parser.defaultParser().commandToString(command);
 	}
 
 	public static final String ARRAY_SEPARATOR = "/";
@@ -265,7 +281,7 @@ public final class Commands{
 	 *
 	 * @author Markus Feng
 	 */
-	protected static final class Parser{
+	protected static class Parser{
 
 		/**
 		 * The default parser.
@@ -411,6 +427,10 @@ public final class Commands{
 			in = in.replace(keyValueSeparator, escape + keyValueSeparator);
 			in = in.replace(entrySeparator, escape + entrySeparator);
 			return in;
+		}
+
+		public static Parser defaultParser(){
+			return DEFAULT_PARSER;
 		}
 	}
 }

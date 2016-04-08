@@ -5,14 +5,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import com.markusfeng.SocketRelay.A.SocketHandler;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
+import com.markusfeng.SocketRelay.Pipe.SocketPipeIn;
+import com.markusfeng.SocketRelay.Pipe.SocketPipeOutImpl;
 
 /**
  * An abstract implementation of SocketProcessor
@@ -21,20 +19,18 @@ import com.markusfeng.SocketRelay.B.SocketProcessor;
  *
  * @param <T> The type of the objects to read and write.
  */
-public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
+public abstract class SocketProcessorAbstract<T>extends SocketPipeOutImpl<T> implements SocketProcessor<T>{
 
 	protected Set<SocketHandler<T>> handlers = new HashSet<SocketHandler<T>>();
 
-	private ExecutorService tpe;
 	private boolean closed;
 
 	protected SocketProcessorAbstract(){
-		this(new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
-				new ArrayBlockingQueue<Runnable>(1024)));
+		super();
 	}
 
 	protected SocketProcessorAbstract(ExecutorService service){
-		tpe = service;
+		super(service);
 	}
 
 	@Override
@@ -69,60 +65,21 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 
 	@Override
 	public void output(T out, boolean block) throws IOException{
-		if(block){
-			new Outputter(null, out).output();
-		}
-		else{
-			try{
-				tpe.execute(new Outputter(null, out));
-			}
-			catch(RejectedExecutionException e){
-				throw new IllegalStateException(e);
-			}
-		}
+		outputToHandler(null, out, block);
 	}
 
 	@Override
-	public void outputToHandler(SocketHandler<T> handler, T out, boolean block) throws IOException{
-		if(block){
-			new Outputter(handler, out).output();
-		}
-		else{
-			try{
-				tpe.execute(new Outputter(handler, out));
-			}
-			catch(RejectedExecutionException e){
-				throw new IllegalStateException(e);
-			}
-		}
+	protected Outputter getOutputter(SocketPipeIn<T> handler, T out){
+		return new ProcessorOutputter(handler, out);
 	}
 
-	/**
-	 * A class used for outputting data to the handler.
-	 *
-	 * @author Markus Feng
-	 */
-	protected class Outputter implements Runnable{
+	protected class ProcessorOutputter extends Outputter{
 
-		protected T text = null;
-		protected SocketHandler<T> out = null;
-
-		public Outputter(SocketHandler<T> handler, T string){
-			out = handler;
-			text = string;
+		public ProcessorOutputter(SocketPipeIn<T> handler, T out){
+			super(handler, out);
 		}
 
 		@Override
-		public void run(){
-			try{
-				output();
-			}
-			catch(IOException e){
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 		public void output() throws IOException{
 			IOException tempException = null;
 			if(out == null){
@@ -137,7 +94,7 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 			}
 			else{
 				try{
-					out.push(text);
+					super.output();
 				}
 				catch(IOException e){
 					tempException = e;
@@ -147,6 +104,7 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 				throw new IOException(tempException);
 			}
 		}
+
 	}
 
 	@Override
@@ -157,12 +115,8 @@ public abstract class SocketProcessorAbstract<T> implements SocketProcessor<T>{
 
 	@Override
 	public void close(){
-		closed = true;
 		executor().shutdown();
-	}
-
-	protected ExecutorService executor(){
-		return tpe;
+		closed = true;
 	}
 
 	protected boolean isClosed(){
