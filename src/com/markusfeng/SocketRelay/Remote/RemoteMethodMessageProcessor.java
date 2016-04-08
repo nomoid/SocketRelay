@@ -44,44 +44,36 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 			final RemoteMethodMessageProcessor server = startServer(port);
 			final RemoteMethodMessageProcessor client = startClient(new String[]{""}, port);
 			final RemoteMethodMessageProcessor client2 = startClient(new String[]{""}, port);
-			new Thread(new Runnable(){
+			new Thread(() -> {
+				try{
+					//client.waitForID();
+					Thread.sleep(1000);
+					Future<Map<Long, CompletableFuture<String>>> future = server.invokeMethod("ping",
+							Collections.singletonMap("pingmessage", "helloworld"));
+					Map<Long, CompletableFuture<String>> map = future.get();
+					System.out.println("invocations gotten: " + map);
+					/*for(Map.Entry<Long, CompletableFuture<String>> entry : map.entrySet()){
+						System.out.println("invocation returned: " + entry.getKey() + "," + entry.getValue().get());
+					}*/
+					CompletableFuture<Map<Long, Void>> completed = runAsynchronously(Executors.newCachedThreadPool(),
+							map, new Function<Map.Entry<Long, String>, Void>(){
 
-				@Override
-				public void run(){
-					try{
-						//client.waitForID();
-						Thread.sleep(1000);
-						Future<Map<Long, CompletableFuture<String>>> future = server.invokeMethod("ping",
-								Collections.singletonMap("pingmessage", "helloworld"));
-						Map<Long, CompletableFuture<String>> map = future.get();
-						System.out.println("invocations gotten: " + map);
-						/*for(Map.Entry<Long, CompletableFuture<String>> entry : map.entrySet()){
-							System.out.println("invocation returned: " + entry.getKey() + "," + entry.getValue().get());
-						}*/
-						CompletableFuture<Map<Long, Void>> completed = runAsynchronously(
-								Executors.newCachedThreadPool(), map, new Function<Map.Entry<Long, String>, Void>(){
+						@Override
+						public Void apply(Map.Entry<Long, String> entry){
+							System.out.println("invocation returned: " + entry.getKey() + "," + entry.getValue());
+							return null;
+						}
 
-							@Override
-							public Void apply(Map.Entry<Long, String> entry){
-								System.out.println("invocation returned: " + entry.getKey() + "," + entry.getValue());
-								return null;
-							}
-
-						});
-						completed.get();
-						System.out.println("invocation complete");
-					}
-					catch(Exception e){
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					});
+					completed.get();
+					System.out.println("invocation complete");
 				}
-
+				catch(Exception e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}).start();
-			/*new Thread(new Runnable(){
-
-				@Override
-				public void run() {
+			/*new Thread(() -> {
 					try {
 						while(!done){
 							Object lock = client2.getAssignmentLock();
@@ -97,9 +89,7 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}
-
-			}).start();*/
+				}).start();*/
 			Thread.sleep(5000);
 		}
 		catch(InterruptedException e){
@@ -167,47 +157,37 @@ public class RemoteMethodMessageProcessor extends RemoteMethodProcessor
 
 	public RemoteMethodMessageProcessor(boolean isServer){
 		super(isServer);
-		addMethod("ping", new RemoteMethod(){
-
-			@Override
-			public String apply(Map<String, String> parameters){
-				long randTime = random.nextInt(2000) + 2000;
-				System.out.println(getID() + ": ping recieved (" + randTime + "): " + parameters.get("pingmessage"));
-				try{
-					Thread.sleep(randTime);
-				}
-				catch(InterruptedException e){
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println(getID() + ": ping back (" + randTime + "): " + parameters.get("pingmessage"));
-				return parameters.get("pingmessage");
+		addMethod("ping", (parameters) -> {
+			long randTime = random.nextInt(2000) + 2000;
+			System.out.println(getID() + ": ping recieved (" + randTime + "): " + parameters.get("pingmessage"));
+			try{
+				Thread.sleep(randTime);
 			}
-
+			catch(InterruptedException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(getID() + ": ping back (" + randTime + "): " + parameters.get("pingmessage"));
+			return parameters.get("pingmessage");
 		});
 	}
 
 	@Override
 	protected Map<String, String> handlerAdded(final Future<Long> addedID, SocketHandler<String> handler){
 		if(VERBOSE){
-			executor().execute(new Runnable(){
-
-				@Override
-				public void run(){
-					try{
-						long added = addedID.get();
-						System.out.println(getID() + ": Handler added with id: " + added);
-					}
-					catch(InterruptedException e){
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					catch(ExecutionException e){
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			executor().execute(() -> {
+				try{
+					long added = addedID.get();
+					System.out.println(getID() + ": Handler added with id: " + added);
 				}
-
+				catch(InterruptedException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch(ExecutionException e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			});
 		}
 		return new HashMap<String, String>();

@@ -40,52 +40,38 @@ public class MessagePassingProcessor extends GroupProcessor
 			final MessagePassingProcessor server = startServer(port);
 			final MessagePassingProcessor client = startClient(new String[]{""}, port);
 			final MessagePassingProcessor client2 = startClient(new String[]{""}, port);
-			new Thread(new Runnable(){
-
-				@Override
-				public void run(){
-					try{
-						while(!done){
-							client.waitForID();
-							client.output(
-									Commands.make("ping",
-											Collections.singletonMap("value", String.valueOf(random.nextLong()))),
-									false);
-							Thread.sleep(1000);
-						}
-					}
-					catch(Exception e){
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+			new Thread(() -> {
+				try{
+					while(!done){
+						client.waitForID();
+						client.output(Commands.make("ping",
+								Collections.singletonMap("value", String.valueOf(random.nextLong()))), false);
+						Thread.sleep(1000);
 					}
 				}
-
+				catch(Exception e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}).start();
-			new Thread(new Runnable(){
-
-				@Override
-				public void run(){
-					try{
-						while(!done){
-							Object lock = client2.getAssignmentLock();
-							synchronized(lock){
-								while(!client2.idAssigned()){
-									lock.wait();
-								}
+			new Thread(() -> {
+				try{
+					while(!done){
+						Object lock = client2.getAssignmentLock();
+						synchronized(lock){
+							while(!client2.idAssigned()){
+								lock.wait();
 							}
-							client2.output(
-									Commands.make("pong",
-											Collections.singletonMap("value", String.valueOf(random.nextLong()))),
-									false);
-							Thread.sleep(2500);
 						}
-					}
-					catch(Exception e){
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						client2.output(Commands.make("pong",
+								Collections.singletonMap("value", String.valueOf(random.nextLong()))), false);
+						Thread.sleep(2500);
 					}
 				}
-
+				catch(Exception e){
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}).start();
 			Thread.sleep(10000);
 		}
@@ -111,6 +97,7 @@ public class MessagePassingProcessor extends GroupProcessor
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	static MessagePassingProcessor startServer(int port){
@@ -158,24 +145,19 @@ public class MessagePassingProcessor extends GroupProcessor
 
 	@Override
 	protected Map<String, String> handlerAdded(final Future<Long> addedID, SocketHandler<String> handler){
-		executor().execute(new Runnable(){
-
-			@Override
-			public void run(){
-				try{
-					long added = addedID.get();
-					System.out.println(getID() + ": Handler added with id: " + added);
-				}
-				catch(InterruptedException e){
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch(ExecutionException e){
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		executor().execute(() -> {
+			try{
+				long added = addedID.get();
+				System.out.println(getID() + ": Handler added with id: " + added);
 			}
-
+			catch(InterruptedException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch(ExecutionException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		});
 		return new HashMap<String, String>();
 	}

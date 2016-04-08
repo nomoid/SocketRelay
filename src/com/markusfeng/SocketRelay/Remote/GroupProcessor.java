@@ -26,14 +26,6 @@ public abstract class GroupProcessor extends SocketProcessorAbstract<String>{
 	private long serverID;
 	private volatile long id;
 	private volatile boolean assigned;
-	public static final Runnable EMPTY_RUNNABLE = new Runnable(){
-
-		@Override
-		public void run(){
-			//Do nothing
-		}
-
-	};
 
 	public GroupProcessor(boolean isServer){
 		server = isServer;

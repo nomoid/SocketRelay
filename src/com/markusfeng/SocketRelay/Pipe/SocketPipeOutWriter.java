@@ -81,86 +81,82 @@ public class SocketPipeOutWriter<T>extends SocketPipeOutImpl<T> implements Socke
 	}
 
 	protected void setup(){
-		executor().execute(new Runnable(){
+		executor().execute(() -> {
+			try{
+				synchronized(destinationLock){
+					while(!destinationSet){
+						try{
+							destinationLock.wait();
+						}
+						catch(InterruptedException e){
+							//TODO exception handling
+							throw new RuntimeException(e);
+						}
+					}
+				}
+				if(isStringMode()){
+					String inputLine;
 
-			@Override
-			public void run(){
-				try{
-					synchronized(destinationLock){
-						while(!destinationSet){
+					while(!isClosed() && (inputLine = br.readLine()) != null){
+						if(!isClosed()){
 							try{
-								destinationLock.wait();
-							}
-							catch(InterruptedException e){
-								//TODO exception handling
-								throw new RuntimeException(e);
-							}
-						}
-					}
-					if(isStringMode()){
-						String inputLine;
-
-						while(!isClosed() && (inputLine = br.readLine()) != null){
-							if(!isClosed()){
-								try{
-									Maybe<T> maybe = writerParser.parse(inputLine);
-									if(maybe.isPresent()){
-										outputToHandler(destination, maybe.get(), false);
-									}
+								Maybe<T> maybe = writerParser.parse(inputLine);
+								if(maybe.isPresent()){
+									outputToHandler(destination, maybe.get(), false);
 								}
-								catch(Exception e){
-									if(!isClosed()){
-										e.printStackTrace();
-									}
+							}
+							catch(Exception e){
+								if(!isClosed()){
+									e.printStackTrace();
 								}
 							}
 						}
 					}
-					else{
-						byte[] input = new byte[BUFFER_SIZE];
-						while(!isClosed()){
-							int read = bis.read(input);
-							if(read < 0){
-								break;
-							}
-							else{
-								try{
-									byte[] sent = input;
-									if(read != sent.length){
-										sent = new byte[read];
-										System.arraycopy(input, 0, sent, 0, read);
-									}
-									Maybe<T> maybe = streamParser.parse(sent);
-									if(maybe.isPresent()){
-										outputToHandler(destination, maybe.get(), false);
-									}
+				}
+				else{
+					byte[] input = new byte[BUFFER_SIZE];
+					while(!isClosed()){
+						int read = bis.read(input);
+						if(read < 0){
+							break;
+						}
+						else{
+							try{
+								byte[] sent = input;
+								if(read != sent.length){
+									sent = new byte[read];
+									System.arraycopy(input, 0, sent, 0, read);
 								}
-								catch(Exception e){
-									if(!isClosed()){
-										e.printStackTrace();
-									}
+								Maybe<T> maybe = streamParser.parse(sent);
+								if(maybe.isPresent()){
+									outputToHandler(destination, maybe.get(), false);
+								}
+							}
+							catch(Exception e){
+								if(!isClosed()){
+									e.printStackTrace();
 								}
 							}
 						}
 					}
+				}
+			}
+			catch(IOException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			finally{
+				try{
+					close();
 				}
 				catch(IOException e){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				finally{
-					try{
-						close();
-					}
-					catch(IOException e){
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
 			}
 
 		});
+
 	}
 
 	@Override

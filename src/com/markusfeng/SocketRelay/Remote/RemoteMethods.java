@@ -25,14 +25,9 @@ public final class RemoteMethods{
 	 * @return the VoidRemoteMethod created from the consumer
 	 */
 	public static VoidRemoteMethod fromConsumer(final Consumer<Map<String, String>> consumer){
-		return new VoidRemoteMethod(){
-
-			@Override
-			public String apply(Map<String, String> socket){
-				consumer.accept(socket);
-				return null;
-			}
-
+		return (value) -> {
+			consumer.accept(value);
+			return null;
 		};
 	}
 
