@@ -1,8 +1,13 @@
 package com.markusfeng.SocketRelay.Switching;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.markusfeng.Shared.Command;
+import com.markusfeng.Shared.Commands;
 import com.markusfeng.Shared.Maybe;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
 import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
@@ -49,7 +54,32 @@ public class SwitchingSystemProcessor extends SwitchingSystemProcessorAbstract<S
 	 *
 	 */
 	@Override
-	public Maybe<SendingObject<String>> processPacket(long id, Command packet){
+	public Maybe<SendingObject<String>> processPacket(long id, Command packet) throws IOException{
+		Map<String, String> args = packet.getArguments();
+		if(packet.getName().equalsIgnoreCase("severlist")){
+			Map<String, String> reply = new HashMap<String, String>();
+			reply.put("requestid", args.get("requestid"));
+			return Maybe.with(SendingObjects.make(0, id,
+					Commands.stringValue(Commands.make(
+							Commands.fromIterable(list.stream().map(data -> ServerData.parser.unparse(data))
+									.map(command -> Commands.stringValue(command.get())).collect(Collectors.toList())),
+					reply))));
+		}
+		else if(packet.getName().equalsIgnoreCase("connectserver")){
+			boolean success = false;
+			long targetID;
+			try{
+				targetID = Long.parseLong(args.get("serverdata.id"));
+				//TODO
+				output(SendingObjects.make(0, targetID, null), false);
+			}
+			catch(NumberFormatException e){
+				e.printStackTrace();
+			}
+			Map<String, String> reply = new HashMap<String, String>();
+			reply.put("requestid", args.get("requestid"));
+			//return Maybe.with(
+		}
 		return null;
 	}
 }
