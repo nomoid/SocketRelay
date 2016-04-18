@@ -1,15 +1,19 @@
 package com.markusfeng.SocketRelay.Switching;
 
+import java.util.List;
+
 import com.markusfeng.Shared.Command;
 import com.markusfeng.Shared.Maybe;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
 import com.markusfeng.SocketRelay.B.SocketProcessorGenerator;
 import com.markusfeng.SocketRelay.Packet.ParsingSystem;
 
-public class SwitchingSystemProcessor<T>extends SwitchingSystemProcessorAbstract<T>{
+public class SwitchingSystemProcessor extends SwitchingSystemProcessorAbstract<String>{
 
-	public SwitchingSystemProcessor(SocketProcessorGenerator<SocketProcessor<T>> gen,
-			ParsingSystem<String, SendingObject<T>> parser){
+	protected List<ServerData> list;
+
+	public SwitchingSystemProcessor(SocketProcessorGenerator<SocketProcessor<String>> gen,
+			ParsingSystem<String, SendingObject<String>> parser){
 		super(gen, parser);
 	}
 
@@ -45,8 +49,7 @@ public class SwitchingSystemProcessor<T>extends SwitchingSystemProcessorAbstract
 	 *
 	 */
 	@Override
-	public Maybe<SendingObject<T>> processPacket(long id, Command packet){
-		// TODO process packet
+	public Maybe<SendingObject<String>> processPacket(long id, Command packet){
 		return null;
 	}
 }

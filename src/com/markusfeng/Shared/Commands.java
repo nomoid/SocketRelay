@@ -1,7 +1,9 @@
 package com.markusfeng.Shared;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -238,6 +240,9 @@ public final class Commands{
 			else{
 				sb.append(ARRAY_SEPARATOR);
 			}
+			String s = obj.toString();
+			s = s.replace("\\", "\\\\");
+			s = s.replace(ARRAY_SEPARATOR, "\\" + ARRAY_SEPARATOR);
 			sb.append(obj);
 		}
 		return sb.toString();
@@ -275,6 +280,10 @@ public final class Commands{
 		return ia;
 	}
 
+	public static List<String> toStringList(String s){
+		return new ArrayList<String>(Parser.LIST_PARSER.parseCommand(s).getArguments().keySet());
+	}
+
 	/**
 	 * A parser class that represents methods used the parse a command.
 	 * A default parser is provided to be used by the Commands methods.
@@ -287,7 +296,13 @@ public final class Commands{
 		 * The default parser.
 		 * Equivalent to new Parser("[", "]", ";", "=", "\\");
 		 */
-		protected static final Parser DEFAULT_PARSER = new Parser("[", "]", ";", "=", "\\");
+		protected static final Parser DEFAULT_PARSER = new Parser("[", "]", ";", "=", "\\", true);
+
+		/**
+		 * The list parser.
+		 * Equivalent to new Parser("", "", ARRAY_SEPARATOR, "", "\\");
+		 */
+		protected static final Parser LIST_PARSER = new Parser("", "", ARRAY_SEPARATOR, "", "\\", false);
 
 		/**
 		 * The value at the initial portion of the command.
@@ -315,14 +330,21 @@ public final class Commands{
 		protected String escape;
 
 		/**
+		 * Whether the first argument should be parsed as the name
+		 */
+		protected boolean hasName;
+
+		/**
 		 * Creates an new parser with the given init, fin, entrySeparator, keyValueSeparator, and escape.
 		 * @param init The value at the initial portion of the command
 		 * @param fin The value at the final portion of the command
 		 * @param entrySeparator The value that separated each command entry
 		 * @param keyValueSeparator The value that separated each key-value pair in a command entry
 		 * @param escape The value for escaping values in the command
+		 * @param hasName Whether the first argument should be parsed as the name
 		 */
-		protected Parser(String init, String fin, String entrySeparator, String keyValueSeparator, String escape){
+		protected Parser(String init, String fin, String entrySeparator, String keyValueSeparator, String escape,
+				boolean hasName){
 			this.init = init;
 			this.fin = fin;
 			this.entrySeparator = entrySeparator;
@@ -357,22 +379,30 @@ public final class Commands{
 					continue;
 				}
 				//Passes the first entry to the name
-				if(name == null){
+				if(hasName && name == null){
 					name = sn;
 					continue;
 				}
-				//Splits the entry by the key-value separator
-				String[] sna = sn.split(escaperString(sn) + keyValueSeparator);
-				String object;
-				if(sna.length > 1){
-					object = commandUnescape(sna[1]);
+				if(keyValueSeparator.length() == 0){
+					hm.put(commandUnescape(sn), "");
 				}
 				else{
-					object = "";
+					//Splits the entry by the key-value separator
+					String[] sna = sn.split(escaperString(sn) + keyValueSeparator);
+					String object;
+					if(sna.length > 1){
+						object = commandUnescape(sna[1]);
+					}
+					else{
+						object = "";
+					}
+					String meta = commandUnescape(sna[0]);
+					//Puts the key-value pair into the command
+					hm.put(meta, object);
 				}
-				String meta = commandUnescape(sna[0]);
-				//Puts the key-value pair into the command
-				hm.put(meta, object);
+			}
+			if(!hasName){
+				name = "";
 			}
 			return make(name, hm);
 		}
