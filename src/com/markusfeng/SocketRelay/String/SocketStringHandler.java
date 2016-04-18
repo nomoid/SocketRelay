@@ -1,11 +1,10 @@
 package com.markusfeng.SocketRelay.String;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import com.markusfeng.Shared.Maybe;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
+import com.markusfeng.SocketRelay.Line.SocketLineHandler;
 
 /**
  * A SocketHandler used for String data.
@@ -20,14 +19,6 @@ public class SocketStringHandler extends SocketLineHandler<String>{
 
 	public SocketStringHandler(Socket socket, SocketProcessor<String> processor){
 		super(socket, processor);
-	}
-
-	public SocketStringHandler(SocketProcessor<String> processor, InputStream in, OutputStream out){
-		super(processor, in, out);
-	}
-
-	public SocketStringHandler(Socket socket, SocketProcessor<String> processor, InputStream in, OutputStream out){
-		super(socket, processor, in, out);
 	}
 
 	@Override

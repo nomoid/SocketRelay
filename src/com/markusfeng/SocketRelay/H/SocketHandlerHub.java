@@ -1,4 +1,3 @@
-
 package com.markusfeng.SocketRelay.H;
 
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class SocketHandlerHub<T>extends SocketHandlerAbstract<T>
 			sockets.add(socket);
 			SocketHandler<T> handler = gen.apply(socket);
 			try{
-				executor().execute(new ReadFromInRunner(handler));
+				tpe.execute(new ReadFromInRunner(handler));
 			}
 			catch(RejectedExecutionException e){
 				throw new IllegalStateException(e);
@@ -78,7 +77,7 @@ public class SocketHandlerHub<T>extends SocketHandlerAbstract<T>
 	protected void writeToOut(T obj, SocketHandler<T> exception) throws IOException{
 		for(SocketHandler<T> handler : handlers){
 			if(exception != null && handler.equals(exception)){
-				executor().execute(new WriteToOutRunner(handler, obj));
+				tpe.execute(new WriteToOutRunner(handler, obj));
 			}
 		}
 	}

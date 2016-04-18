@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.markusfeng.SocketRelay.A.SocketHandler;
-import com.markusfeng.SocketRelay.Pipe.SocketPipeOut;
 
 /**
  * Used to process data to and from Sockets.
@@ -17,7 +16,7 @@ import com.markusfeng.SocketRelay.Pipe.SocketPipeOut;
  *
  * @param <T> The type of the objects to read and write.
  */
-public interface SocketProcessor<T>extends Closeable, SocketPipeOut<T>{
+public interface SocketProcessor<T>extends Closeable{
 
 	/**
 	 * Called by a SocketHandler when input is recieved
@@ -68,6 +67,16 @@ public interface SocketProcessor<T>extends Closeable, SocketPipeOut<T>{
 	 * @throws IOException
 	 */
 	void output(T out, boolean block) throws IOException;
+
+	/**
+	 * This method can be called to output any data from the program to the output
+	 * of a specific handler.
+	 * @param handler the handler to output to
+	 * @param out the data to output
+	 * @param block whether to block the current thread when attepting to output
+	 * @throws IOException
+	 */
+	void outputToHandler(SocketHandler<T> handler, T out, boolean block) throws IOException;
 
 	/**
 	 * Returns whether other methods calling the input method should assume it blocks

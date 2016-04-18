@@ -42,7 +42,6 @@ public class SocketClient<T extends SocketHandler<?>> implements SocketClientMac
 		this();
 		attachHandler(handler);
 		attachSocket(ClientSocketWrapper.get(socket));
-		//TODO raw thread creation
 		new Thread(this).start();
 	}
 
@@ -113,7 +112,6 @@ public class SocketClient<T extends SocketHandler<?>> implements SocketClientMac
 					e.printStackTrace();
 				}
 			}
-			//TODO raw thread creation
 			new Thread(handler).start();
 		}
 

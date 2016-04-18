@@ -1,7 +1,10 @@
 package com.markusfeng.Shared;
 
 import java.util.NoSuchElementException;
+<<<<<<< HEAD
 import java.util.function.Function;
+=======
+>>>>>>> parent of f3c1922... Reworked entire system - incomplete
 
 /**
  * A container class that can contain a null value
@@ -104,15 +107,6 @@ public class Maybe<T>{
 		}
 		else{
 			return "Value: " + t;
-		}
-	}
-
-	public static <T, S> Maybe<S> compose(Maybe<T> maybe, Function<T, S> function){
-		if(maybe.isPresent()){
-			return Maybe.with(function.apply(maybe.get()));
-		}
-		else{
-			return Maybe.empty();
 		}
 	}
 }

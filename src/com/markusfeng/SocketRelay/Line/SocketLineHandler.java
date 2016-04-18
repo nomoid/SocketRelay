@@ -1,17 +1,14 @@
-package com.markusfeng.SocketRelay.String;
+package com.markusfeng.SocketRelay.Line;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
 import com.markusfeng.Shared.Maybe;
+import com.markusfeng.SocketRelay.B.SocketHandlerAbstract;
 import com.markusfeng.SocketRelay.B.SocketProcessor;
-import com.markusfeng.SocketRelay.H.SocketIOHandler;
-import com.markusfeng.SocketRelay.Pipe.SocketPipeIn;
 
 /**
  * A socket handler than handles one line of text at a time. The text is then
@@ -21,7 +18,7 @@ import com.markusfeng.SocketRelay.Pipe.SocketPipeIn;
  *
  * @param <T> The type of the information of the processor
  */
-public abstract class SocketLineHandler<T>extends SocketIOHandler<T>{
+public abstract class SocketLineHandler<T>extends SocketHandlerAbstract<T>{
 
 	/**
 	 * The OutputStream wrapper to write to
@@ -51,32 +48,11 @@ public abstract class SocketLineHandler<T>extends SocketIOHandler<T>{
 		super(socket, processor);
 	}
 
-	/**
-	 * Creates a new SocketLineHandler with the given processor, input stream, and output stream.
-	 * @param processor the processor to use
-	 * @param in the input stream to use
-	 * @param out the output stream to use
-	 */
-	public SocketLineHandler(SocketProcessor<T> processor, InputStream in, OutputStream out){
-		super(processor, in, out);
-	}
-
-	/**
-	 * Creates a new SocketLineHandler with the given processor, socket, input stream, and output stream.
-	 * Calls openSocket(socket) within this constructor.
-	 * @param socket the socket to use
-	 * @param processor the processor to use
-	 * @param in the input stream to use
-	 * @param out the output stream to use
-	 */
-	public SocketLineHandler(Socket socket, SocketProcessor<T> processor, InputStream in, OutputStream out){
-		super(socket, processor, in, out);
-	}
-
 	@Override
 	public void initialize() throws IOException{
-		out = new PrintWriter(getOutputStream(), true);
-		in = new BufferedReader(new InputStreamReader(getInputStream()));
+
+		out = new PrintWriter(socket.getOutputStream(), true);
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
 
 	@Override
@@ -109,22 +85,6 @@ public abstract class SocketLineHandler<T>extends SocketIOHandler<T>{
 	}
 
 	/**
-	 * Returns the BufferedReader input of the SocketLineHandler.
-	 * @return the BufferedReader input of the SocketLineHandler.
-	 */
-	protected BufferedReader getInput(){
-		return in;
-	}
-
-	/**
-	 * Returns the PrintWriter output of the SocketLineHandler.
-	 * @return the PrintWriter output of the SocketLineHandler.
-	 */
-	protected PrintWriter getOutput(){
-		return out;
-	}
-
-	/**
 	 * Converts a string to an object of the parameterized type.
 	 * The Maybe returned contains either a value, which will be passed to the processor,
 	 * or the value will be not present, in which case the processor will not be notified.
@@ -142,19 +102,4 @@ public abstract class SocketLineHandler<T>extends SocketIOHandler<T>{
 	 * @return a Maybe that may or may not contain a string to write
 	 */
 	protected abstract Maybe<String> convertFromObject(T obj);
-
-	/**
-	 * Returns a string pipe that can be used with a SocketPipeIn to write data.
-	 * @return a string pipe that can be used with a SocketPipeIn to write data.
-	 */
-	protected SocketPipeIn<String> getStringPipe(){
-		return new SocketPipeIn<String>(){
-
-			@Override
-			public void push(String output) throws IOException{
-				out.println(output);
-			}
-
-		};
-	}
 }

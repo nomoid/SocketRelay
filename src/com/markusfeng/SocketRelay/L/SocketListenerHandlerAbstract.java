@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T>{
 
 	protected Set<SocketListener<T>> listeners = new HashSet<SocketListener<T>>();
-	private ExecutorService tpe;
+	protected ExecutorService tpe;
 
 	protected SocketListenerHandlerAbstract(){
 		tpe = new ThreadPoolExecutor(4, Integer.MAX_VALUE, 1000, TimeUnit.MILLISECONDS,
@@ -52,7 +52,7 @@ public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T
 
 	protected void dispatch(T handler){
 		try{
-			executor().execute(new LSocketDispatcher(handler));
+			tpe.execute(new LSocketDispatcher(handler));
 		}
 		catch(RejectedExecutionException e){
 			throw new IllegalStateException(e);
@@ -108,10 +108,6 @@ public class SocketListenerHandlerAbstract<T> implements SocketListenerHandler<T
 
 	@Override
 	public void close() throws IOException{
-		executor().shutdown();
-	}
-
-	protected ExecutorService executor(){
-		return tpe;
+		tpe.shutdown();
 	}
 }
