@@ -1,10 +1,6 @@
 package com.markusfeng.Shared;
 
 import java.util.NoSuchElementException;
-<<<<<<< HEAD
-import java.util.function.Function;
-=======
->>>>>>> parent of f3c1922... Reworked entire system - incomplete
 
 /**
  * A container class that can contain a null value
